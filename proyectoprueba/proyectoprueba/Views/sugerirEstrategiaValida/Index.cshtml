@@ -1,0 +1,102 @@
+﻿@{
+    ViewBag.Title = "Sugerir Estrategia Valida";
+
+}
+
+<h2>Sugerir Estrategia Valida</h2>
+
+<div class="grid-x grid-padding-x">
+    <div class="large-6">
+        <div class="large-6 cell">
+            <label>Plan de Marketing</label>
+            <select>
+                <option>Plan 1</option>
+                <option>Plan 2</option>
+                <option>Plan 3</option>
+                <option>Plan 4</option>
+            </select>
+        </div>
+        <div class="large-6 cell">
+            <label>Objetivos</label>
+            <select>
+                <option>Plan 1</option>
+                <option>Plan 2</option>
+                <option>Plan 3</option>
+                <option>Plan 4</option>
+            </select>
+        </div>
+    </div>
+    <div class="large-6">
+        <div class="large-6 large-offset-3">
+            <input type="button" value="Nueva Estrategia" class="button"/>
+            <input type="button" value="Sugerir estrategias por comparación" class="button" />
+        </div>
+    </div>
+    <div class="large-12">
+        <table class="table-scroll">
+            <thead>
+                <tr>
+                    <td></td>
+                    <td>Estrategia</td>
+                    <td>Estado</td>
+                    <td>Opciones</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="checkbox"/></td>
+                    <td>Estrategia 1</td>
+                    <td>Estrategia 2</td>
+                    <td>Estrategia 3</td>
+                </tr>
+            </tbody>
+            
+        </table>
+    </div>
+
+
+    <div class="row">
+        <div class="columns">
+            <p><a data-open="exampleModal11">Click me for a modal</a></p>
+
+            <div class="reveal" id="exampleModal11" aria-labelledby="exampleModalHeader11" data-reveal>
+                <h1 id="exampleModalHeader11">Label for the Modal!</h1>
+                <p class="lead">I am even more accessible than the other modals.</p>
+                <button class="close-button" data-close aria-label="Close Accessible Modal" type="button">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    
+
+    <div class="large-12" id="columnchart_material" style="height: 500px;"></div>
+</div>
+
+
+<script type="text/javascript">
+    google.charts.load('current', { 'packages': ['bar'] });
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Year', 'Sales', 'Expenses', 'Profit'],
+          ['2014', 1000, 400, 200],
+          ['2015', 1170, 460, 250],
+          ['2016', 660, 1120, 300],
+          ['2017', 1030, 540, 350]
+        ]);
+
+        var options = {
+            chart: {
+                title: 'Company Performance',
+                subtitle: 'Sales, Expenses, and Profit: 2014-2017',
+            }
+        };
+
+        var chart = new google.charts.Bar(document.getElementById('columnchart_material'));
+
+        chart.draw(data, google.charts.Bar.convertOptions(options));
+    }
+</script>
