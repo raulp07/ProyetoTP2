@@ -2,7 +2,10 @@
     ViewBag.Title = "Sugerir Estrategia Valida";
 
 }
+@{
+    string txtObejtivo = "";
 
+}
 <h2>Sugerir Estrategia Valida</h2>
 
 <div class="grid-x grid-padding-x">
@@ -28,7 +31,7 @@
     </div>
     <div class="large-6">
         <div class="large-6 large-offset-3">
-            <input type="button" value="Nueva Estrategia" class="button"/>
+            <input type="button" value="Nueva Estrategia" class="button" data-open="exampleModal11" />
             <input type="button" value="Sugerir estrategias por comparación" class="button" />
         </div>
     </div>
@@ -44,59 +47,94 @@
             </thead>
             <tbody>
                 <tr>
-                    <td><input type="checkbox"/></td>
+                    <td><input type="checkbox" /></td>
                     <td>Estrategia 1</td>
                     <td>Estrategia 2</td>
                     <td>Estrategia 3</td>
                 </tr>
             </tbody>
-            
+
         </table>
     </div>
 
 
-    <div class="row">
-        <div class="columns">
-            <p><a data-open="exampleModal11">Click me for a modal</a></p>
 
-            <div class="reveal" id="exampleModal11" aria-labelledby="exampleModalHeader11" data-reveal>
-                <h1 id="exampleModalHeader11">Label for the Modal!</h1>
-                <p class="lead">I am even more accessible than the other modals.</p>
-                <button class="close-button" data-close aria-label="Close Accessible Modal" type="button">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        </div>
-    </div>
 
-    
 
-    <div class="large-12" id="columnchart_material" style="height: 500px;"></div>
+
+    @*<div class="large-12" id="columnchart_material" style="height: 500px;"></div>*@
 </div>
 
+<div class="small reveal " id="exampleModal11" aria-labelledby="exampleModal11" data-reveal>
+    <fieldset>
+        <div class="medium-6 column">
+            <h2> Registro de Estrategia</h2>
+        </div>
+        <div class="medium-6 column">
+            <h3>Estrategia para cumplir el objetivo de @txtObejtivo</h3>
+        </div>
+        <div class="medium-6 column">
+            <label class="label">Estrategia:</label>
+            <input type="text" placeholder="Nombre Estrategia" />
+        </div>
+        <div class="medium-6 column">
+            <label>Descripción por Estrategia:</label>
+            <textarea rows="3" placeholder="Descripción de estrategia"></textarea>
+        </div>
+        <div class="medium-6 column">
+            <label>Fecha:</label>
+            <input type="text" />
+        </div>
+        <div class="medium-6 column">
+            <h3>Factores o Rubros de la Estrategia (ingrese del 1 al 10): </h3>
+        </div>
+        <div class="medium-6 column">
+            <div class="medium-1">
+                <label>Apoyo del Área de Finanzas</label>
+                <input type="text" />
+            </div>
+            <div class="medium-1">
+                <label>Colaboración en el equipo</label>
+                <input type="text" />
+            </div>
+            <div class="medium-1">
+                <label>Apoyo de otras áreas</label>
+                <input type="text" />
+            </div>
+            <div class="medium-1">
+                <label>Puntualidad del equipo</label>
+                <input type="text" />
+            </div>
+        </div>
+    </fieldset>
 
-<script type="text/javascript">
-    google.charts.load('current', { 'packages': ['bar'] });
-    google.charts.setOnLoadCallback(drawChart);
+    <button class="close-button" data-close aria-label="Close reveal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
 
-    function drawChart() {
-        var data = google.visualization.arrayToDataTable([
-          ['Year', 'Sales', 'Expenses', 'Profit'],
-          ['2014', 1000, 400, 200],
-          ['2015', 1170, 460, 250],
-          ['2016', 660, 1120, 300],
-          ['2017', 1030, 540, 350]
-        ]);
+@*<script type="text/javascript">
+        google.charts.load('current', { 'packages': ['bar'] });
+        google.charts.setOnLoadCallback(drawChart);
 
-        var options = {
-            chart: {
-                title: 'Company Performance',
-                subtitle: 'Sales, Expenses, and Profit: 2014-2017',
-            }
-        };
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+              ['Year', 'Sales', 'Expenses', 'Profit'],
+              ['2014', 1000, 400, 200],
+              ['2015', 1170, 460, 250],
+              ['2016', 660, 1120, 300],
+              ['2017', 1030, 540, 350]
+            ]);
 
-        var chart = new google.charts.Bar(document.getElementById('columnchart_material'));
+            var options = {
+                chart: {
+                    title: 'Company Performance',
+                    subtitle: 'Sales, Expenses, and Profit: 2014-2017',
+                }
+            };
 
-        chart.draw(data, google.charts.Bar.convertOptions(options));
-    }
-</script>
+            var chart = new google.charts.Bar(document.getElementById('columnchart_material'));
+
+            chart.draw(data, google.charts.Bar.convertOptions(options));
+        }
+    </script>*@
