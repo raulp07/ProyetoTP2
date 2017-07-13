@@ -1,11 +1,8 @@
-﻿//$(function () {
-//    $('#dpt').fdatepicker({
-//        format: 'mm-dd-yyyy',
-//        disableDblClickSelection: true,
-//        language: 'vi',
-//        pickTime: true
-//    });
-//});
+﻿$('#dpt').fdatepicker({
+    format: 'mm-dd-yyyy',
+    disableDblClickSelection: true,
+    language: 'vi'
+});
 
 
 google.charts.load('current', { 'packages': ['bar'] });
