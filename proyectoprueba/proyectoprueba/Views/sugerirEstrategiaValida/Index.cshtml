@@ -31,8 +31,8 @@
     </div>
     <div class="large-6">
         <div class="large-6 large-offset-3">
-            <input type="button" value="Nueva Estrategia" class="button" data-open="exampleModal11" />
-            <input type="button" value="Sugerir estrategias por comparación" class="button" />
+            <a href="#" class="button" data-open="exampleModal11">Nueva Estrategia</a>
+            <a href="#" class="button">Sugerir estrategias por comparación</a>
         </div>
     </div>
     <div class="large-12">
@@ -124,8 +124,12 @@
     </div>
 
     <div class="grid-x grid-padding-x align-center">
-        <div class="cell small-4"><a class="button" href="#">Aceptar</a></div>
-        <div class="cell small-4"><a class="alert button" href="#">Cancelar</a></div>
+        <div class="cell small-4">
+            <a class="button" href="#" id="btnGuardar">Aceptar</a>
+        </div>
+        <div class="cell small-4">
+            <a class="alert button" href="#">Cancelar</a>
+        </div>
     </div>
 
     <button class="close-button" data-close aria-label="Close reveal" type="button">
@@ -133,10 +137,4 @@
     </button>
 </div>
 
-<script src="~/Views/sugerirEstrategiaValida/sugerirEstrategiaValidaJs.js"></script>
-
-<script type="text/javascript">
-    
-
-
-</script>
+<script src="~/Scripts/JSVistas/sugerirEstrategiaValidaJs.js"></script>
