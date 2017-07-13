@@ -13,8 +13,17 @@
 
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
-        <link rel="stylesheet" href="~/Scripts/Fundation/css/foundation.css">
-        <link rel="stylesheet" href="~/Scripts/Fundation/css/app.css">
+        <link rel="stylesheet" href="~/Scripts/Frameworks/foundation/css/foundation.css">
+        <link rel="stylesheet" href="~/Scripts/Frameworks/foundation/css/app.css">
+
+
+        <script src="~/Scripts/Frameworks/foundation/js/vendor/jquery.js"></script>
+        <link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+        <script src="~/Scripts/Frameworks/js/foundation-datepicker.js"></script>
+        <script src="~/Scripts/Frameworks/js/locales/foundation-datepicker.vi.js"></script>
+
+        <link rel="stylesheet" href="~/Scripts/Frameworks/css/foundation-datepicker.min.css">
+
 
     </head>
     <body>
@@ -37,7 +46,7 @@
                 </div>
             </div>
         </header>
-        <div id="body" class="grid-container">
+        <div id="body" >
             @RenderSection("featured", required: false)
             <section class="content-wrapper main-content clear-fix">
                 @RenderBody()
@@ -54,10 +63,12 @@
 
         @Scripts.Render("~/bundles/jquery")
         @RenderSection("scripts", required: false)
-        @Scripts.Render("~/Scripts/Fundation/js/vendor/jquery.js")
-        @Scripts.Render("~/Scripts/Fundation/js/vendor/what-input.js")
-        @Scripts.Render("~/Scripts/Fundation/js/vendor/foundation.js")
-        @Scripts.Render("~/Scripts/Fundation/js/app.js")
+        @Scripts.Render("~/Scripts/Frameworks/foundation/js/vendor/jquery.js")
+        @Scripts.Render("~/Scripts/Frameworks/foundation/js/vendor/what-input.js")
+        @Scripts.Render("~/Scripts/Frameworks/foundation/js/vendor/foundation.js")
+        @Scripts.Render("~/Scripts/Frameworks/foundation/js/app.js")
+
+        
     </body>
 </html>
 
