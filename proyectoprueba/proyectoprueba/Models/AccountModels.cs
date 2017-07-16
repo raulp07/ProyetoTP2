@@ -260,6 +260,14 @@ namespace proyectoprueba.Models
         }
         private int _Id_Objetivo;
 
+        public int Id_PlanMarketing
+        {
+            get { return _Id_PlanMarketing; }
+            set { _Id_PlanMarketing = value; }
+        }
+        private int _Id_PlanMarketing;
+        
+
         ///
 
         /// Gets or Sets NombreObjetivo
@@ -372,6 +380,14 @@ namespace proyectoprueba.Models
             set { _idRubroAccion = value; }
         }
         private int _idRubroAccion;
+
+        public int Id_Objetivo
+        {
+            get { return _Id_Objetivo; }
+            set { _Id_Objetivo = value; }
+        }
+        private int _Id_Objetivo;
+        
 
         ///
 
@@ -498,6 +514,13 @@ namespace proyectoprueba.Models
         }
         private int _Id_Estrategia;
 
+        public int Id_Objetivo
+        {
+            get { return _Id_Objetivo; }
+            set { _Id_Objetivo = value; }
+        }
+        private int _Id_Objetivo;
+        
         ///
 
         /// Gets or Sets NombreEstrategia

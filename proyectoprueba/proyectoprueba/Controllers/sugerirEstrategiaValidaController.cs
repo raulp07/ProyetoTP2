@@ -7,6 +7,7 @@ using System.Data;
 using System.Data.SqlClient;
 using proyectoprueba.Models;
 using System.Data.Common;
+using System.Configuration;
 
 
 namespace proyectoprueba.Controllers
@@ -22,12 +23,21 @@ namespace proyectoprueba.Controllers
         }
 
 
+        [HttpPost]
+        public JsonResult ListarPlanMKT()
+        {
+            return Json(GetAllPlanMarketing(), JsonRequestBehavior.AllowGet);
+        }
 
+        [HttpPost]
+        public JsonResult ListarObjetivos(PlanMarketing PMKT)
+        {
+            return Json(GetAllObjetivos(PMKT), JsonRequestBehavior.AllowGet);
+        }
 
         #region "DAO Estrategia"
 
-
-        private const string Config = "server=localhost;database = GMKT;integrated security=true;";
+        private static string Config = ConfigurationManager.ConnectionStrings["cnx"].ConnectionString;
         private static SqlConnection cn = new SqlConnection(Config);
         public List<Estrategia> GetAllEstrategia()
         {
@@ -114,5 +124,78 @@ namespace proyectoprueba.Controllers
 
 
         #endregion
+
+        #region "DAO Plan de Marketing"
+        public List<PlanMarketing> GetAllPlanMarketing()
+        {
+            SqlCommand cmd = new SqlCommand("spGetPlanMarketingAll", cn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            List<PlanMarketing> list = new List<PlanMarketing>();
+            cn.Open();
+            using (IDataReader dataReader = cmd.ExecuteReader())
+            {
+                while (dataReader.Read())
+                {
+                    PlanMarketing obj = new PlanMarketing();
+                    if (dataReader["Id_PlanMarketing"] != DBNull.Value) { obj.Id_PlanMarketing = (int)dataReader["Id_PlanMarketing"]; }
+                    if (dataReader["nombrePanMarketing"] != DBNull.Value) { obj.nombrePanMarketing = (string)dataReader["nombrePanMarketing"]; }
+                    if (dataReader["descrípcion"] != DBNull.Value) { obj.descrípcion = (string)dataReader["descrípcion"]; }
+                    if (dataReader["fechaIni"] != DBNull.Value) { obj.fechaIni = (DateTime)dataReader["fechaIni"]; }
+                    if (dataReader["fechaFin"] != DBNull.Value) { obj.fechaFin = (DateTime)dataReader["fechaFin"]; }
+                    if (dataReader["presupuesto"] != DBNull.Value) { obj.presupuesto = (decimal)dataReader["presupuesto"]; }
+                    if (dataReader["UsuarioRegistra"] != DBNull.Value) { obj.UsuarioRegistra = (string)dataReader["UsuarioRegistra"]; }
+                    if (dataReader["MaquinaRegistra"] != DBNull.Value) { obj.MaquinaRegistra = (string)dataReader["MaquinaRegistra"]; }
+                    if (dataReader["FechaRegistro"] != DBNull.Value) { obj.FechaRegistro = (DateTime)dataReader["FechaRegistro"]; }
+                    if (dataReader["UsuarioModifica"] != DBNull.Value) { obj.UsuarioModifica = (string)dataReader["UsuarioModifica"]; }
+                    if (dataReader["MaquinaModifica"] != DBNull.Value) { obj.MaquinaModifica = (string)dataReader["MaquinaModifica"]; }
+                    if (dataReader["FechaModifica"] != DBNull.Value) { obj.FechaModifica = (DateTime)dataReader["FechaModifica"]; }
+                    list.Add(obj);
+                }
+            }
+            cn.Close();
+            return list;
+        }
+
+        #endregion
+
+        #region "DAO Objetivos"
+        public List<Objetivos> GetAllObjetivos(PlanMarketing PMKT)
+        {
+            SqlCommand cmd = new SqlCommand("spGetObjetivosAll", cn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.Add("@Id_PlanMarketing", SqlDbType.Int).Value = PMKT.Id_PlanMarketing;
+
+            List<Objetivos> list = new List<Objetivos>();
+            cn.Open();
+            using (IDataReader dataReader = cmd.ExecuteReader())
+            {
+
+                while (dataReader.Read())
+                {
+
+                    Objetivos obj = new Objetivos();
+
+                    if (dataReader["Id_Objetivo"] != DBNull.Value) { obj.Id_Objetivo = (int)dataReader["Id_Objetivo"]; }
+                    if (dataReader["Id_PlanMarketing"] != DBNull.Value) { obj.Id_PlanMarketing = (int)dataReader["Id_PlanMarketing"]; }
+                    if (dataReader["NombreObjetivo"] != DBNull.Value) { obj.NombreObjetivo = (string)dataReader["NombreObjetivo"]; }
+                    if (dataReader["DescripcionObjetivo"] != DBNull.Value) { obj.DescripcionObjetivo = (string)dataReader["DescripcionObjetivo"]; }
+                    if (dataReader["UsuarioRegistra"] != DBNull.Value) { obj.UsuarioRegistra = (string)dataReader["UsuarioRegistra"]; }
+                    if (dataReader["MaquinaRegistra"] != DBNull.Value) { obj.MaquinaRegistra = (string)dataReader["MaquinaRegistra"]; }
+                    if (dataReader["FechaRegistro"] != DBNull.Value) { obj.FechaRegistro = (DateTime)dataReader["FechaRegistro"]; }
+                    if (dataReader["UsuarioModifica"] != DBNull.Value) { obj.UsuarioModifica = (string)dataReader["UsuarioModifica"]; }
+                    if (dataReader["MaquinaModifica"] != DBNull.Value) { obj.MaquinaModifica = (string)dataReader["MaquinaModifica"]; }
+                    if (dataReader["FechaModifica"] != DBNull.Value) { obj.FechaModifica = (DateTime)dataReader["FechaModifica"]; }
+
+                    list.Add(obj);
+
+                }
+
+            }
+            cn.Close();
+            return list;
+
+        }
+        #endregion
+
     }
 }

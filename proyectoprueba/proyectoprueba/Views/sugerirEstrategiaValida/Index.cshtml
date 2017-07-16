@@ -12,26 +12,19 @@
     <div class="large-6">
         <div class="large-6 cell">
             <label>Plan de Marketing</label>
-            <select>
-                <option>Plan 1</option>
-                <option>Plan 2</option>
-                <option>Plan 3</option>
-                <option>Plan 4</option>
+            <select id="SELPMKT" >
             </select>
         </div>
         <div class="large-6 cell">
             <label>Objetivos</label>
-            <select>
-                <option>Plan 1</option>
-                <option>Plan 2</option>
-                <option>Plan 3</option>
-                <option>Plan 4</option>
+            <select id="SELOBJ">
+                <option>--Seleccione--</option>
             </select>
         </div>
     </div>
     <div class="large-6">
         <div class="large-6 large-offset-3">
-            <a href="#" class="button" data-open="exampleModal11">Nueva Estrategia</a>
+            <a href="#" class="button" data-open="exampleModal11" id="btnNuevo">Nueva Estrategia</a>
             <a href="#" class="button">Sugerir estrategias por comparación</a>
         </div>
     </div>
@@ -70,12 +63,12 @@
     <div class="medium-6 column">
         <h2> Registro de Estrategia</h2>
     </div>
-    <div class="medium-6 column">
-        <h3>Estrategia para cumplir el objetivo de @txtObejtivo</h3>
+    <div id="tituloObj" class="medium-6 column">
+        <h3> </h3>
     </div>
     <div class="medium-6 column">
         <label>Estrategia:</label>
-        <input type="text" placeholder="Nombre Estrategia" />
+        <input type="text" placeholder="Nombre Estrategia" maxlength="50"/>
     </div>
     <div class="medium-6 column">
         <label>Descripción por Estrategia:</label>
@@ -86,7 +79,7 @@
             <label>Fecha:</label>
         </div>
         <div class="cell small-3">
-            <input type="text" id="dpt" />
+            <input type="datetime" id="dpt" readonly="readonly" />
         </div>
     </div>
     <div class="medium-6 column">
@@ -98,13 +91,13 @@
                 <label>Apoyo del Área de Finanzas</label>
             </div>
             <div class="cell small-2">
-                <input type="text" />
+                <input id="imp1" class="numeral" type="text" onkeypress="return soloNumeros(event)" maxlength="2"/>
             </div>
             <div class="cell small-3">
                 <label>Colaboración en el equipo</label>
             </div>
             <div class="cell small-2">
-                <input type="text" />
+                <input id="imp2" class="numeral" type="text" onkeypress="return soloNumeros(event)" maxlength="2" />
             </div>
         </div>
         <div class="grid-x grid-padding-x">
@@ -112,13 +105,13 @@
                 <label>Apoyo de otras áreas</label>
             </div>
             <div class="cell small-2">
-                <input type="text" />
+                <input id="imp3" class="numeral" type="text" onkeypress="return soloNumeros(event)" maxlength="2" />
             </div>
             <div class="cell small-3">
                 <label>Puntualidad del equipo</label>
             </div>
             <div class="cell small-2">
-                <input type="text" />
+                <input id="imp4" class="numeral" type="text" onkeypress="return soloNumeros(event)" maxlength="2" />
             </div>
         </div>
     </div>

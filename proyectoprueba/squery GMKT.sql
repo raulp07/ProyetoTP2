@@ -39,6 +39,7 @@ go
 create table Objetivos
 (
 Id_Objetivo int primary key identity,
+Id_PlanMarketing int,
 NombreObjetivo varchar(50),
 DescripcionObjetivo varchar(max),
 UsuarioRegistra varchar(100),
@@ -58,6 +59,7 @@ go
 create table RubroEstrategia
 (
 idRubroAccion int primary key identity,
+Id_Objetivo int,
 NombreRubroEstrategia varchar(50),
 PorcentajeImportancia int,
 CostoPermitidoRubro decimal(18,2),
@@ -79,6 +81,7 @@ go
 Create table Estrategia
 (
 Id_Estrategia int primary key identity,
+Id_Objetivo int,
 NombreEstrategia varchar(50),
 DescripcionEstrategia varchar(max),
 EstadoEstrategia int,
@@ -100,6 +103,8 @@ go
 Create table DatoEstadisticoEstrategia
 (
 Id_DatoEstadisticoEstrategia int primary key identity,
+idRubroAccion int,
+Id_Estrategia int,
 NombreEstadisticoEstrategia varchar(50),
 Puntuacion int,
 Porcentaje int,
@@ -249,11 +254,16 @@ begin
 end
 go
 CREATE PROCEDURE [spGetObjetivosAll]
+(
+@Id_PlanMarketing int =0
+)
 AS
 BEGIN
 SELECT *
 FROM
 Objetivos
+where
+(Id_PlanMarketing=0 or Id_PlanMarketing=@Id_PlanMarketing)
 END
 
 
@@ -265,6 +275,7 @@ end
 go
 CREATE PROCEDURE [spInsertObjetivos]
 @Id_Objetivo int,
+@Id_PlanMarketing int,
 @NombreObjetivo varchar(50),
 @DescripcionObjetivo varchar(max),
 @UsuarioRegistra varchar(100),
@@ -278,6 +289,7 @@ BEGIN
 INSERT INTO 
 Objetivos(
 Id_Objetivo,
+Id_PlanMarketing,
 NombreObjetivo,
 DescripcionObjetivo,
 UsuarioRegistra,
@@ -289,6 +301,7 @@ FechaModifica
 )
 VALUES (
 @Id_Objetivo,
+@Id_PlanMarketing,
 @NombreObjetivo,
 @DescripcionObjetivo,
 @UsuarioRegistra,
@@ -308,6 +321,7 @@ end
 go
 CREATE PROCEDURE [spUpdateObjetivos]
 @Id_Objetivo int,
+@Id_PlanMarketing int,
 @NombreObjetivo varchar(50),
 @DescripcionObjetivo varchar(max),
 @UsuarioRegistra varchar(100),
@@ -321,6 +335,7 @@ BEGIN
 UPDATE
 Objetivos
 SET
+Id_PlanMarketing = @Id_PlanMarketing,
 NombreObjetivo = @NombreObjetivo,
 DescripcionObjetivo = @DescripcionObjetivo,
 UsuarioRegistra = @UsuarioRegistra,
@@ -330,7 +345,7 @@ UsuarioModifica = @UsuarioModifica,
 MaquinaModifica = @MaquinaModifica,
 FechaModifica = @FechaModifica
 WHERE
-@Id_Objetivo = @Id_Objetivo
+Id_Objetivo = @Id_Objetivo
 END
 
 Go
@@ -375,7 +390,7 @@ begin
 end
 go
 CREATE PROCEDURE [spInsertRubroEstrategia]
-@idRubroAccion int,
+@Id_Objetivo int,
 @NombreRubroEstrategia varchar(50),
 @PorcentajeImportancia int,
 @CostoPermitidoRubro decimal(18,2),
@@ -389,7 +404,7 @@ AS
 BEGIN
 INSERT INTO 
 RubroEstrategia(
-idRubroAccion,
+Id_Objetivo,
 NombreRubroEstrategia,
 PorcentajeImportancia,
 CostoPermitidoRubro,
@@ -401,7 +416,7 @@ MaquinaModifica,
 FechaModifica
 )
 VALUES (
-@idRubroAccion,
+@Id_Objetivo,
 @NombreRubroEstrategia,
 @PorcentajeImportancia,
 @CostoPermitidoRubro,
@@ -421,6 +436,7 @@ end
 go
 CREATE PROCEDURE [spUpdateRubroEstrategia]
 @idRubroAccion int,
+@Id_Objetivo int,
 @NombreRubroEstrategia varchar(50),
 @PorcentajeImportancia int,
 @CostoPermitidoRubro decimal(18,2),
@@ -435,6 +451,7 @@ BEGIN
 UPDATE
 RubroEstrategia
 SET
+Id_Objetivo = @Id_Objetivo,
 NombreRubroEstrategia = @NombreRubroEstrategia,
 PorcentajeImportancia = @PorcentajeImportancia,
 CostoPermitidoRubro = @CostoPermitidoRubro,
@@ -488,7 +505,7 @@ begin
 end
 go
 CREATE PROCEDURE [spInsertEstrategia]
-@Id_Estrategia int,
+@Id_Objetivo int,
 @NombreEstrategia varchar(50),
 @DescripcionEstrategia varchar(max),
 @EstadoEstrategia int,
@@ -503,7 +520,7 @@ AS
 BEGIN
 INSERT INTO 
 Estrategia(
-Id_Estrategia,
+Id_Objetivo,
 NombreEstrategia,
 DescripcionEstrategia,
 EstadoEstrategia,
@@ -516,7 +533,7 @@ MaquinaModifica,
 FechaModifica
 )
 VALUES (
-@Id_Estrategia,
+@Id_Objetivo,
 @NombreEstrategia,
 @DescripcionEstrategia,
 @EstadoEstrategia,
@@ -539,6 +556,7 @@ end
 go
 CREATE PROCEDURE [spUpdateEstrategia]
 @Id_Estrategia int,
+@Id_Objetivo int,
 @NombreEstrategia varchar(50),
 @DescripcionEstrategia varchar(max),
 @EstadoEstrategia int,
@@ -554,6 +572,7 @@ BEGIN
 UPDATE
 Estrategia
 SET
+Id_Objetivo = @Id_Objetivo,
 NombreEstrategia = @NombreEstrategia,
 DescripcionEstrategia = @DescripcionEstrategia,
 EstadoEstrategia = @EstadoEstrategia,
@@ -705,4 +724,41 @@ END
 
 
 GO
+
+
+
+
+
+insert into PlanMarketing (nombrePanMarketing,descrípcion) values ('Plan Marketing 1','Plan Marketing 1')
+insert into PlanMarketing (nombrePanMarketing,descrípcion) values ('Plan Marketing 2','Plan Marketing 2')
+insert into PlanMarketing (nombrePanMarketing,descrípcion) values ('Plan Marketing 3','Plan Marketing 3')
+insert into PlanMarketing (nombrePanMarketing,descrípcion) values ('Plan Marketing 4','Plan Marketing 4')
+insert into PlanMarketing (nombrePanMarketing,descrípcion) values ('Plan Marketing 5','Plan Marketing 5')
+
+
+insert into Objetivos (Id_PlanMarketing,NombreObjetivo,DescripcionObjetivo) values (1,'Objetivo 1 Planmkt 1','Objetivo 1')
+insert into Objetivos (Id_PlanMarketing,NombreObjetivo,DescripcionObjetivo) values (1,'Objetivo 2 Planmkt 1','Objetivo 2')
+insert into Objetivos (Id_PlanMarketing,NombreObjetivo,DescripcionObjetivo) values (1,'Objetivo 3 Planmkt 1','Objetivo 3')
+insert into Objetivos (Id_PlanMarketing,NombreObjetivo,DescripcionObjetivo) values (1,'Objetivo 4 Planmkt 1','Objetivo 4')
+
+
+insert into Objetivos (Id_PlanMarketing,NombreObjetivo,DescripcionObjetivo) values (2,'Objetivo 1 Planmkt 2','Objetivo 1')
+insert into Objetivos (Id_PlanMarketing,NombreObjetivo,DescripcionObjetivo) values (2,'Objetivo 2 Planmkt 2','Objetivo 2')
+insert into Objetivos (Id_PlanMarketing,NombreObjetivo,DescripcionObjetivo) values (2,'Objetivo 3 Planmkt 2','Objetivo 3')
+insert into Objetivos (Id_PlanMarketing,NombreObjetivo,DescripcionObjetivo) values (2,'Objetivo 4 Planmkt 2','Objetivo 4')
+
+insert into Objetivos (Id_PlanMarketing,NombreObjetivo,DescripcionObjetivo) values (3,'Objetivo 1 Planmkt 3','Objetivo 1')
+insert into Objetivos (Id_PlanMarketing,NombreObjetivo,DescripcionObjetivo) values (3,'Objetivo 2 Planmkt 3','Objetivo 2')
+insert into Objetivos (Id_PlanMarketing,NombreObjetivo,DescripcionObjetivo) values (3,'Objetivo 3 Planmkt 3','Objetivo 3')
+insert into Objetivos (Id_PlanMarketing,NombreObjetivo,DescripcionObjetivo) values (3,'Objetivo 4 Planmkt 3','Objetivo 4')
+
+insert into Objetivos (Id_PlanMarketing,NombreObjetivo,DescripcionObjetivo) values (4,'Objetivo 1 Planmkt 4','Objetivo 1')
+insert into Objetivos (Id_PlanMarketing,NombreObjetivo,DescripcionObjetivo) values (4,'Objetivo 2 Planmkt 4','Objetivo 2')
+insert into Objetivos (Id_PlanMarketing,NombreObjetivo,DescripcionObjetivo) values (4,'Objetivo 3 Planmkt 4','Objetivo 3')
+insert into Objetivos (Id_PlanMarketing,NombreObjetivo,DescripcionObjetivo) values (4,'Objetivo 4 Planmkt 4','Objetivo 4')
+
+insert into Objetivos (Id_PlanMarketing,NombreObjetivo,DescripcionObjetivo) values (5,'Objetivo 1 Planmkt 5','Objetivo 1')
+insert into Objetivos (Id_PlanMarketing,NombreObjetivo,DescripcionObjetivo) values (5,'Objetivo 2 Planmkt 5','Objetivo 2')
+insert into Objetivos (Id_PlanMarketing,NombreObjetivo,DescripcionObjetivo) values (5,'Objetivo 3 Planmkt 5','Objetivo 3')
+insert into Objetivos (Id_PlanMarketing,NombreObjetivo,DescripcionObjetivo) values (5,'Objetivo 4 Planmkt 5','Objetivo 4')
 
