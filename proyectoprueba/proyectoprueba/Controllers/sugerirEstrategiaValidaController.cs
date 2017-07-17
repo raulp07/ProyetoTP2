@@ -35,6 +35,23 @@ namespace proyectoprueba.Controllers
             return Json(GetAllObjetivos(PMKT), JsonRequestBehavior.AllowGet);
         }
 
+        [HttpPost]
+        public JsonResult ADDEstrategia(Estrategia BEEstrategia)
+        {
+            return Json(InsertEstrategia(BEEstrategia), JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult ListarRubroEstrategia(RubroEstrategia BERubroEstrategia)
+        {
+            return Json(GetAllRubroEstrategia(BERubroEstrategia), JsonRequestBehavior.AllowGet);
+        }
+        [HttpPost]
+        public JsonResult ADDDatoEstadisticoEstrategia(DatoEstadisticoEstrategia BEDatoEstadisticoEstrategia)
+        {
+            return Json(InsertDatoEstadisticoEstrategia(BEDatoEstadisticoEstrategia), JsonRequestBehavior.AllowGet);
+        }
+
         #region "DAO Estrategia"
 
         private static string Config = ConfigurationManager.ConnectionStrings["cnx"].ConnectionString;
@@ -77,26 +94,42 @@ namespace proyectoprueba.Controllers
 
         }
 
-        public bool InsertEstrategia(Estrategia BEEstrategia)
+        public string InsertEstrategia(Estrategia BEEstrategia)
         {
             SqlCommand cmd;
-            using (cmd = new SqlCommand("spInsertEstrategia", cn))
+            cn.Open();
+            string Id_Estrategia = "0";
+            try
             {
-                cmd.CommandType = CommandType.StoredProcedure;
+                using (cmd = new SqlCommand("spInsertEstrategia", cn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
 
-                cmd.Parameters.Add("Id_Estrategia", SqlDbType.Int).Value = BEEstrategia.Id_Estrategia;
-                cmd.Parameters.Add("NombreEstrategia", SqlDbType.VarChar).Value = BEEstrategia.NombreEstrategia;
-                cmd.Parameters.Add("DescripcionEstrategia", SqlDbType.VarChar).Value = BEEstrategia.DescripcionEstrategia;
-                cmd.Parameters.Add("EstadoEstrategia", SqlDbType.Int).Value = BEEstrategia.EstadoEstrategia;
-                cmd.Parameters.Add("Fechacumplimiento", SqlDbType.DateTime).Value = BEEstrategia.Fechacumplimiento;
-                cmd.Parameters.Add("UsuarioRegistra", SqlDbType.VarChar).Value = BEEstrategia.UsuarioRegistra;
-                cmd.Parameters.Add("MaquinaRegistra", SqlDbType.VarChar).Value = BEEstrategia.MaquinaRegistra;
-                cmd.Parameters.Add("FechaRegistro", SqlDbType.DateTime).Value = BEEstrategia.FechaRegistro;
-                cmd.Parameters.Add("UsuarioModifica", SqlDbType.VarChar).Value = BEEstrategia.UsuarioModifica;
-                cmd.Parameters.Add("MaquinaModifica", SqlDbType.VarChar).Value = BEEstrategia.MaquinaModifica;
-                cmd.Parameters.Add("FechaModifica", SqlDbType.DateTime).Value = BEEstrategia.FechaModifica;
+                    cmd.Parameters.Add("@Id_Estrategia", SqlDbType.Int).Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add("@Id_Objetivo", SqlDbType.Int).Value = BEEstrategia.Id_Objetivo;
+                    cmd.Parameters.Add("@NombreEstrategia", SqlDbType.VarChar).Value = BEEstrategia.NombreEstrategia;
+                    cmd.Parameters.Add("@DescripcionEstrategia", SqlDbType.VarChar).Value = BEEstrategia.DescripcionEstrategia;
+                    cmd.Parameters.Add("@EstadoEstrategia", SqlDbType.Int).Value = BEEstrategia.EstadoEstrategia;
+                    cmd.Parameters.Add("@Fechacumplimiento", SqlDbType.DateTime).Value = BEEstrategia.Fechacumplimiento;
+                    cmd.Parameters.Add("@UsuarioRegistra", SqlDbType.VarChar).Value = Environment.UserName;
+                    cmd.Parameters.Add("@MaquinaRegistra", SqlDbType.VarChar).Value = Environment.UserDomainName;
+                    cmd.Parameters.Add("@FechaRegistro", SqlDbType.DateTime).Value = DateTime.Today;
+                    cmd.Parameters.Add("@UsuarioModifica", SqlDbType.VarChar).Value = Environment.UserName;
+                    cmd.Parameters.Add("@MaquinaModifica", SqlDbType.VarChar).Value = Environment.UserDomainName;
+                    cmd.Parameters.Add("@FechaModifica", SqlDbType.DateTime).Value = DateTime.Today;
+                    cmd.ExecuteNonQuery();
+                    Id_Estrategia = Convert.ToString(cmd.Parameters["@Id_Estrategia"].Value.ToString());
+                }
+                return Id_Estrategia;
             }
-            return (cmd.ExecuteNonQuery() == 1);
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                cn.Close();
+            }
         }
 
 
@@ -194,6 +227,159 @@ namespace proyectoprueba.Controllers
             cn.Close();
             return list;
 
+        }
+        #endregion
+
+        #region "DAO DatoEstadisticoEstrategia"
+        public List<DatoEstadisticoEstrategia> GetAllDatoEstadisticoEstrategia()
+        {
+            SqlCommand cmd = new SqlCommand("spGetDatoEstadisticoEstrategiaAll", cn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            List<DatoEstadisticoEstrategia> list = new List<DatoEstadisticoEstrategia>();
+            cn.Open();
+            using (IDataReader dataReader = cmd.ExecuteReader())
+            {
+
+                while (dataReader.Read())
+                {
+
+                    DatoEstadisticoEstrategia obj = new DatoEstadisticoEstrategia();
+
+                    if (dataReader["Id_DatoEstadisticoEstrategia"] != DBNull.Value) { obj.Id_DatoEstadisticoEstrategia = (int)dataReader["Id_DatoEstadisticoEstrategia"]; }
+                    if (dataReader["idRubroAccion"] != DBNull.Value) { obj.idRubroAccion = (int)dataReader["idRubroAccion"]; }
+                    if (dataReader["Id_Estrategia"] != DBNull.Value) { obj.Id_Estrategia = (int)dataReader["Id_Estrategia"]; }
+                    if (dataReader["NombreEstadisticoEstrategia"] != DBNull.Value) { obj.NombreEstadisticoEstrategia = (string)dataReader["NombreEstadisticoEstrategia"]; }
+                    if (dataReader["Puntuacion"] != DBNull.Value) { obj.Puntuacion = (int)dataReader["Puntuacion"]; }
+                    if (dataReader["Porcentaje"] != DBNull.Value) { obj.Porcentaje = (int)dataReader["Porcentaje"]; }
+                    if (dataReader["Fechacumplimiento"] != DBNull.Value) { obj.Fechacumplimiento = (DateTime)dataReader["Fechacumplimiento"]; }
+                    if (dataReader["UsuarioRegistra"] != DBNull.Value) { obj.UsuarioRegistra = (string)dataReader["UsuarioRegistra"]; }
+                    if (dataReader["MaquinaRegistra"] != DBNull.Value) { obj.MaquinaRegistra = (string)dataReader["MaquinaRegistra"]; }
+                    if (dataReader["FechaRegistro"] != DBNull.Value) { obj.FechaRegistro = (DateTime)dataReader["FechaRegistro"]; }
+                    if (dataReader["UsuarioModifica"] != DBNull.Value) { obj.UsuarioModifica = (string)dataReader["UsuarioModifica"]; }
+                    if (dataReader["MaquinaModifica"] != DBNull.Value) { obj.MaquinaModifica = (string)dataReader["MaquinaModifica"]; }
+                    if (dataReader["FechaModifica"] != DBNull.Value) { obj.FechaModifica = (DateTime)dataReader["FechaModifica"]; }
+
+                    list.Add(obj);
+
+                }
+
+            }
+            cn.Close();
+            return list;
+
+        }
+
+        public bool InsertDatoEstadisticoEstrategia(DatoEstadisticoEstrategia BEDatoEstadisticoEstrategia)
+        {
+            SqlCommand cmd;
+            
+            try
+            {
+                if (cn.State == ConnectionState.Closed)
+                    cn.Open();
+
+                using (cmd = new SqlCommand("spInsertDatoEstadisticoEstrategia", cn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@idRubroAccion", SqlDbType.Int).Value = BEDatoEstadisticoEstrategia.idRubroAccion;
+                    cmd.Parameters.Add("@Id_Estrategia", SqlDbType.Int).Value = BEDatoEstadisticoEstrategia.Id_Estrategia;
+                    //cmd.Parameters.Add("@NombreEstadisticoEstrategia", SqlDbType.VarChar).Value = BEDatoEstadisticoEstrategia.NombreEstadisticoEstrategia;
+                    cmd.Parameters.Add("@Puntuacion", SqlDbType.Int).Value = BEDatoEstadisticoEstrategia.Puntuacion;
+                    //cmd.Parameters.Add("@Porcentaje", SqlDbType.Int).Value = BEDatoEstadisticoEstrategia.Porcentaje;
+                    cmd.Parameters.Add("@Fechacumplimiento", SqlDbType.DateTime).Value = BEDatoEstadisticoEstrategia.Fechacumplimiento;
+                    cmd.Parameters.Add("@UsuarioRegistra", SqlDbType.VarChar).Value = Environment.UserName;
+                    cmd.Parameters.Add("@MaquinaRegistra", SqlDbType.VarChar).Value = Environment.UserDomainName;
+                    cmd.Parameters.Add("@FechaRegistro", DbType.DateTime).Value = DateTime.Today;
+                    cmd.Parameters.Add("@UsuarioModifica", SqlDbType.VarChar).Value = Environment.UserName;
+                    cmd.Parameters.Add("@MaquinaModifica", SqlDbType.VarChar).Value = Environment.UserDomainName;
+                    cmd.Parameters.Add("@FechaModifica", SqlDbType.DateTime).Value = DateTime.Today;
+                    cmd.ExecuteNonQuery();
+                }
+                return ( 1== 1);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+        }
+
+
+
+        public bool UpdateDatoEstadisticoEstrategia(DatoEstadisticoEstrategia BEDatoEstadisticoEstrategia)
+        {
+
+
+            SqlCommand cmd;
+            try
+            {
+                cn.Open();
+                using (cmd = new SqlCommand("spUpdateDatoEstadisticoEstrategia", cn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@Id_DatoEstadisticoEstrategia", SqlDbType.Int).Value = BEDatoEstadisticoEstrategia.Id_DatoEstadisticoEstrategia;
+                    cmd.Parameters.Add("@idRubroAccion", SqlDbType.Int).Value = BEDatoEstadisticoEstrategia.idRubroAccion;
+                    cmd.Parameters.Add("@Id_Estrategia", SqlDbType.Int).Value = BEDatoEstadisticoEstrategia.Id_Estrategia;
+                    cmd.Parameters.Add("@NombreEstadisticoEstrategia", SqlDbType.VarChar).Value = BEDatoEstadisticoEstrategia.NombreEstadisticoEstrategia;
+                    cmd.Parameters.Add("@Puntuacion", SqlDbType.Int).Value = BEDatoEstadisticoEstrategia.Puntuacion;
+                    cmd.Parameters.Add("@Porcentaje", SqlDbType.Int).Value = BEDatoEstadisticoEstrategia.Porcentaje;
+                    cmd.Parameters.Add("@Fechacumplimiento", SqlDbType.DateTime).Value = BEDatoEstadisticoEstrategia.Fechacumplimiento;
+                    cmd.Parameters.Add("@UsuarioRegistra", SqlDbType.VarChar).Value = BEDatoEstadisticoEstrategia.UsuarioRegistra;
+                    cmd.Parameters.Add("@MaquinaRegistra", SqlDbType.VarChar).Value = BEDatoEstadisticoEstrategia.MaquinaRegistra;
+                    cmd.Parameters.Add("@FechaRegistro", DbType.DateTime).Value = BEDatoEstadisticoEstrategia.FechaRegistro;
+                    cmd.Parameters.Add("@UsuarioModifica", SqlDbType.VarChar).Value = BEDatoEstadisticoEstrategia.UsuarioModifica;
+                    cmd.Parameters.Add("@MaquinaModifica", SqlDbType.VarChar).Value = BEDatoEstadisticoEstrategia.MaquinaModifica;
+                    cmd.Parameters.Add("@FechaModifica", SqlDbType.DateTime).Value = BEDatoEstadisticoEstrategia.FechaModifica;
+                }
+
+                return (cmd.ExecuteNonQuery() == 1);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            finally
+            {
+                cn.Close();
+            }
+        }
+
+
+        #endregion
+
+        #region "DAO Rubro Estrategia"
+
+        public List<RubroEstrategia> GetAllRubroEstrategia(RubroEstrategia BERubroEstrategia)
+        {
+            SqlCommand cmd = new SqlCommand("spGetRubroEstrategiaAll", cn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.Add("@idRubroAccion", SqlDbType.Int).Value = BERubroEstrategia.idRubroAccion;
+            cmd.Parameters.Add("@Id_Objetivo", SqlDbType.Int).Value = BERubroEstrategia.Id_Objetivo;
+            List<RubroEstrategia> list = new List<RubroEstrategia>();
+            cn.Open();
+            using (IDataReader dataReader = cmd.ExecuteReader())
+            {
+                while (dataReader.Read())
+                {
+                    RubroEstrategia obj = new RubroEstrategia();
+                    if (dataReader["idRubroAccion"] != DBNull.Value) { obj.idRubroAccion = (int)dataReader["idRubroAccion"]; }
+                    if (dataReader["Id_Objetivo"] != DBNull.Value) { obj.Id_Objetivo = (int)dataReader["Id_Objetivo"]; }
+                    if (dataReader["NombreRubroEstrategia"] != DBNull.Value) { obj.NombreRubroEstrategia = (string)dataReader["NombreRubroEstrategia"]; }
+                    if (dataReader["PorcentajeImportancia"] != DBNull.Value) { obj.PorcentajeImportancia = (int)dataReader["PorcentajeImportancia"]; }
+                    if (dataReader["CostoPermitidoRubro"] != DBNull.Value) { obj.CostoPermitidoRubro = (decimal)dataReader["CostoPermitidoRubro"]; }
+                    if (dataReader["UsuarioRegistra"] != DBNull.Value) { obj.UsuarioRegistra = (string)dataReader["UsuarioRegistra"]; }
+                    if (dataReader["MaquinaRegistra"] != DBNull.Value) { obj.MaquinaRegistra = (string)dataReader["MaquinaRegistra"]; }
+                    if (dataReader["FechaRegistro"] != DBNull.Value) { obj.FechaRegistro = (DateTime)dataReader["FechaRegistro"]; }
+                    if (dataReader["UsuarioModifica"] != DBNull.Value) { obj.UsuarioModifica = (string)dataReader["UsuarioModifica"]; }
+                    if (dataReader["MaquinaModifica"] != DBNull.Value) { obj.MaquinaModifica = (string)dataReader["MaquinaModifica"]; }
+                    if (dataReader["FechaModifica"] != DBNull.Value) { obj.FechaModifica = (DateTime)dataReader["FechaModifica"]; }
+                    list.Add(obj);
+                }
+            }
+            cn.Close();
+            return list;
         }
         #endregion
 

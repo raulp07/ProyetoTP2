@@ -375,11 +375,18 @@ begin
 end
 go
 CREATE PROCEDURE [spGetRubroEstrategiaAll]
+(
+@idRubroAccion int =0,
+@Id_Objetivo int =0
+)
 AS
 BEGIN
 SELECT *
 FROM
 RubroEstrategia
+where 
+(@idRubroAccion = 0 or idRubroAccion = @idRubroAccion)
+and (@Id_Objetivo = 0 or Id_Objetivo = @Id_Objetivo)
 END
 
 
@@ -505,6 +512,7 @@ begin
 end
 go
 CREATE PROCEDURE [spInsertEstrategia]
+@Id_Estrategia int out,
 @Id_Objetivo int,
 @NombreEstrategia varchar(50),
 @DescripcionEstrategia varchar(max),
@@ -547,6 +555,7 @@ VALUES (
 )
 END
 
+set @Id_Estrategia = @@IDENTITY
 
 GO
 IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'spUpdateEstrategia')
@@ -627,10 +636,11 @@ begin
 end
 go
 CREATE PROCEDURE [spInsertDatoEstadisticoEstrategia]
-@Id_DatoEstadisticoEstrategia int,
-@NombreEstadisticoEstrategia varchar(50),
+@idRubroAccion int,
+@Id_Estrategia int,
+@NombreEstadisticoEstrategia varchar(50)='',
 @Puntuacion int,
-@Porcentaje int,
+@Porcentaje int = 0,
 @Fechacumplimiento datetime,
 @UsuarioRegistra varchar(100),
 @MaquinaRegistra varchar(100),
@@ -642,7 +652,8 @@ AS
 BEGIN
 INSERT INTO 
 DatoEstadisticoEstrategia(
-Id_DatoEstadisticoEstrategia,
+idRubroAccion,
+Id_Estrategia,
 NombreEstadisticoEstrategia,
 Puntuacion,
 Porcentaje,
@@ -655,7 +666,8 @@ MaquinaModifica,
 FechaModifica
 )
 VALUES (
-@Id_DatoEstadisticoEstrategia,
+@idRubroAccion,
+@Id_Estrategia,
 @NombreEstadisticoEstrategia,
 @Puntuacion,
 @Porcentaje,
@@ -761,4 +773,24 @@ insert into Objetivos (Id_PlanMarketing,NombreObjetivo,DescripcionObjetivo) valu
 insert into Objetivos (Id_PlanMarketing,NombreObjetivo,DescripcionObjetivo) values (5,'Objetivo 2 Planmkt 5','Objetivo 2')
 insert into Objetivos (Id_PlanMarketing,NombreObjetivo,DescripcionObjetivo) values (5,'Objetivo 3 Planmkt 5','Objetivo 3')
 insert into Objetivos (Id_PlanMarketing,NombreObjetivo,DescripcionObjetivo) values (5,'Objetivo 4 Planmkt 5','Objetivo 4')
+
+insert into RubroEstrategia (Id_Objetivo,NombreRubroEstrategia,PorcentajeImportancia,CostoPermitidoRubro) values (1,'rubro 1 objetivo 1',3,5)
+insert into RubroEstrategia (Id_Objetivo,NombreRubroEstrategia,PorcentajeImportancia,CostoPermitidoRubro) values (1,'rubro 2 objetivo 1',3,5)
+insert into RubroEstrategia (Id_Objetivo,NombreRubroEstrategia,PorcentajeImportancia,CostoPermitidoRubro) values (1,'rubro 3 objetivo 1',3,5)
+insert into RubroEstrategia (Id_Objetivo,NombreRubroEstrategia,PorcentajeImportancia,CostoPermitidoRubro) values (1,'rubro 4 objetivo 1',3,5)
+
+insert into RubroEstrategia (Id_Objetivo,NombreRubroEstrategia,PorcentajeImportancia,CostoPermitidoRubro) values (2,'rubro 1 objetivo 2',3,5)
+insert into RubroEstrategia (Id_Objetivo,NombreRubroEstrategia,PorcentajeImportancia,CostoPermitidoRubro) values (2,'rubro 2 objetivo 2',3,5)
+insert into RubroEstrategia (Id_Objetivo,NombreRubroEstrategia,PorcentajeImportancia,CostoPermitidoRubro) values (2,'rubro 3 objetivo 2',3,5)
+insert into RubroEstrategia (Id_Objetivo,NombreRubroEstrategia,PorcentajeImportancia,CostoPermitidoRubro) values (2,'rubro 4 objetivo 2',3,5)
+
+insert into RubroEstrategia (Id_Objetivo,NombreRubroEstrategia,PorcentajeImportancia,CostoPermitidoRubro) values (3,'rubro 1 objetivo 3',3,5)
+insert into RubroEstrategia (Id_Objetivo,NombreRubroEstrategia,PorcentajeImportancia,CostoPermitidoRubro) values (3,'rubro 2 objetivo 3',3,5)
+insert into RubroEstrategia (Id_Objetivo,NombreRubroEstrategia,PorcentajeImportancia,CostoPermitidoRubro) values (3,'rubro 3 objetivo 3',3,5)
+insert into RubroEstrategia (Id_Objetivo,NombreRubroEstrategia,PorcentajeImportancia,CostoPermitidoRubro) values (3,'rubro 4 objetivo 3',3,5)
+
+insert into RubroEstrategia (Id_Objetivo,NombreRubroEstrategia,PorcentajeImportancia,CostoPermitidoRubro) values (4,'rubro 1 objetivo 4',3,5)
+insert into RubroEstrategia (Id_Objetivo,NombreRubroEstrategia,PorcentajeImportancia,CostoPermitidoRubro) values (4,'rubro 2 objetivo 4',3,5)
+insert into RubroEstrategia (Id_Objetivo,NombreRubroEstrategia,PorcentajeImportancia,CostoPermitidoRubro) values (4,'rubro 3 objetivo 4',3,5)
+insert into RubroEstrategia (Id_Objetivo,NombreRubroEstrategia,PorcentajeImportancia,CostoPermitidoRubro) values (4,'rubro 4 objetivo 4',3,5)
 

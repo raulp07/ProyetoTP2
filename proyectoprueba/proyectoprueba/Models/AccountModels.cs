@@ -658,6 +658,28 @@ namespace proyectoprueba.Models
         }
         private int _Id_DatoEstadisticoEstrategia;
 
+        /// Gets or Sets idRubroAccion
+        ///
+
+        public int idRubroAccion
+        {
+            get { return _idRubroAccion; }
+            set { _idRubroAccion = value; }
+        }
+        private int _idRubroAccion;
+
+        ///
+
+        /// Gets or Sets Id_Estrategia
+        ///
+
+        public int Id_Estrategia
+        {
+            get { return _Id_Estrategia; }
+            set { _Id_Estrategia = value; }
+        }
+        private int _Id_Estrategia;
+
         ///
 
         /// Gets or Sets NombreEstadisticoEstrategia

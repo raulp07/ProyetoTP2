@@ -68,11 +68,11 @@
     </div>
     <div class="medium-6 column">
         <label>Estrategia:</label>
-        <input type="text" placeholder="Nombre Estrategia" maxlength="50"/>
+        <input id="txtnombre" type="text" placeholder="Nombre Estrategia" maxlength="50"/>
     </div>
     <div class="medium-6 column">
         <label>Descripción por Estrategia:</label>
-        <textarea rows="3" placeholder="Descripción de estrategia"></textarea>
+        <textarea id="txtdescripcion" rows="3" placeholder="Descripción de estrategia"></textarea>
     </div>
     <div class="grid-x grid-padding-x">
         <div class="cell small-2">
@@ -85,13 +85,14 @@
     <div class="medium-6 column">
         <label>Factores o Rubros de la Estrategia (ingrese del 1 al 10): </label>
     </div>
-    <div class="medium-6 column">
-        <div class="grid-x grid-padding-x">
-            <div class="cell small-3">
+    <div class="medium-6 column " >
+        <div class="grid-x grid-padding-x ContenedorRubros">
+
+            @*<div class="cell small-3">
                 <label>Apoyo del Área de Finanzas</label>
             </div>
             <div class="cell small-2">
-                <input id="imp1" class="numeral" type="text" onkeypress="return soloNumeros(event)" maxlength="2"/>
+                <input id="imp1" class="numeral" type="text" onkeypress="return soloNumeros(event)" maxlength="2" />
             </div>
             <div class="cell small-3">
                 <label>Colaboración en el equipo</label>
@@ -99,8 +100,6 @@
             <div class="cell small-2">
                 <input id="imp2" class="numeral" type="text" onkeypress="return soloNumeros(event)" maxlength="2" />
             </div>
-        </div>
-        <div class="grid-x grid-padding-x">
             <div class="cell small-3">
                 <label>Apoyo de otras áreas</label>
             </div>
@@ -112,7 +111,8 @@
             </div>
             <div class="cell small-2">
                 <input id="imp4" class="numeral" type="text" onkeypress="return soloNumeros(event)" maxlength="2" />
-            </div>
+            </div>*@
+
         </div>
     </div>
 
