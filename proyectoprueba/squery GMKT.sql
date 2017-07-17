@@ -498,11 +498,16 @@ begin
 end
 go
 CREATE PROCEDURE [spGetEstrategiaAll]
+(
+@Id_Objetivo int =0
+)
 AS
 BEGIN
 SELECT *
 FROM
 Estrategia
+where 
+(@Id_Objetivo= 0 or Id_Objetivo = @Id_Objetivo)
 END
 
 GO
@@ -613,6 +618,27 @@ Id_Estrategia = @Id_Estrategia
 END
 
 ----- store DatoEstadisticoEstrategia ------------
+
+
+Go
+IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'spGetDatoEstadisticoEstrategiaObjetivos')
+begin
+	drop Procedure spGetDatoEstadisticoEstrategiaObjetivos
+end
+go
+CREATE PROCEDURE [spGetDatoEstadisticoEstrategiaObjetivos]
+(
+@Id_Objetivo int 
+)
+AS
+BEGIN
+SELECT DEE.*,E.NombreEstrategia
+FROM
+DatoEstadisticoEstrategia DEE
+inner join Estrategia E on DEE.Id_Estrategia = E.Id_Estrategia
+where E.Id_Objetivo = @Id_Objetivo
+END
+
 
 Go
 IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'spGetDatoEstadisticoEstrategiaAll')

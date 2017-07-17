@@ -5,30 +5,24 @@
 });
 
 
-//google.charts.load('current', { 'packages': ['bar'] });
+google.charts.load('current', { 'packages': ['bar'] });
 //google.charts.setOnLoadCallback(drawChart);
 
-//function drawChart(_D) {
-//    var data = google.visualization.arrayToDataTable([
-//        _D
-//      //['Year', 'Sales', 'Expenses', 'Profit'],
-//      //['2014', 1000, 400, 200],
-//      //['2015', 1170, 460, 250],
-//      //['2016', 660, 1120, 300],
-//      //['2017', 1030, 540, 350]
-//    ]);
+function drawChart(_data) {
+    var fffff = JSON.parse(_data);
+    console.log(fffff);
+    var data = google.visualization.arrayToDataTable(fffff);
+    var options = {
+        chart: {
+            title: 'Company Performance',
+            subtitle: 'Sales, Expenses, and Profit: 2014-2017',
+        }
+    };
+    var chart = new google.charts.Bar(document.getElementById('columnchart_material'));
 
-//    var options = {
-//        chart: {
-//            title: 'Company Performance',
-//            subtitle: 'Sales, Expenses, and Profit: 2014-2017',
-//        }
-//    };
+    chart.draw(data, google.charts.Bar.convertOptions(options));
 
-//    var chart = new google.charts.Bar(document.getElementById('columnchart_material'));
-
-//    chart.draw(data, google.charts.Bar.convertOptions(options));
-//}
+}
 
 
 
@@ -41,7 +35,7 @@ $("#btnGuardar").on("click", function (e) {
 
 
     var _date = new Date($("#dpt").val());
-    
+
     var Estrategia = {
         Id_Objetivo: $("#SELOBJ").val(),
         NombreEstrategia: $("#txtnombre").val(),
@@ -126,7 +120,7 @@ $('#SELPMKT').change(function (e) {
         });
         $('#SELOBJ').on('change', function (e) {
             e.preventDefault();
-            ListarEstrategia(); 
+            ListarEstrategia();
         });
     }
 
@@ -137,6 +131,82 @@ $('#btnNuevo').on('click', function (e) {
     $('#tituloObj h3').text('Estrategia para cumplir el objetivo de ' + $('#SELOBJ option:selected').text());
     ListarRubroEstrategia();
 });
+
+$('#btnSugerir').on('click', function (e) {
+    e.preventDefault();
+
+
+    var RubroEstrategia = {
+        Id_Objetivo: $("#SELOBJ").val()
+    }
+    var jsonData = JSON.stringify({ BERubroEstrategia: RubroEstrategia });
+    $.ajax({
+        type: "POST",
+        url: "http://localhost:7382/sugerirEstrategiaValida/ListarRubroEstrategia",
+        data: jsonData,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: OnSuccess
+    });
+
+    function OnSuccess(response) {
+        var jsonData = JSON.stringify({ BEEstrategia: RubroEstrategia });
+        $.ajax({
+            type: "POST",
+            //getListOfCars is my webmethod   
+            url: "http://localhost:7382/sugerirEstrategiaValida/ListarDatoEstadisticoEstrategiaObjetivo",
+            data: jsonData,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: OnSuccess
+        });
+
+        function OnSuccess(response2) {
+
+            //Cabezera
+            var ArrayCabezera = '';
+            var Cabezera = 0;
+            ArrayCabezera = '["Rubro",';
+            $.each(response2, function (key, value2) {
+                if (Cabezera != value2.Id_Estrategia) {
+                    Cabezera = value2.Id_Estrategia
+                    ArrayCabezera += '"' + value2.NombreEstadisticoEstrategia + '",';
+                }
+            });
+            
+            ArrayCabezera = ArrayCabezera.substring(0, ArrayCabezera.length - 1);
+            ArrayCabezera += '],';
+            //Cuerpo
+            var data = '';
+            $.each(response, function (key, value1) {
+                data += '["' + value1.NombreRubroEstrategia + '",';
+                $.each(response2, function (key, value2) {
+                    if (value1.idRubroAccion == value2.idRubroAccion) {
+                        data +=  value2.Puntuacion +',';
+                    }
+                });
+                data = data.substring(0, data.length - 1);
+                data += '],';
+            });
+            data = data.substring(0, data.length - 1);
+
+            
+
+            data = '['+ArrayCabezera + data + ']';
+            google.charts.setOnLoadCallback(drawChart(data));
+        }
+
+
+
+
+    }
+    //['Year', 'Sales', 'Expenses', 'Profit'],
+    //  ['2014', 1000, 400, 200],
+    //  ['2015', 1170, 460, 250],
+    //  ['2016', 660, 1120, 300],
+    //  ['2017', 1030, 540, 350]
+});
+
 
 function soloNumeros(e) {
     var key = window.Event ? e.which : e.keyCode
@@ -155,7 +225,7 @@ function soloNumeros(e) {
 }
 
 function ListarEstrategia() {
-    
+
 
     var BEEstrategia = {
         Id_Objetivo: $('#SELOBJ').val()
@@ -190,7 +260,7 @@ function listarPlanMKT() {
         type: "POST",
         url: "http://localhost:7382/sugerirEstrategiaValida/ListarPlanMKT",
         contentType: "application/json; charset=utf-8",
-        dataType: "json", 
+        dataType: "json",
         success: OnSuccess,
         error: OnErrorCall
     });
@@ -200,7 +270,6 @@ function listarPlanMKT() {
         $.each(response, function (key, value) {
             $('#SELPMKT').append('<option value=' + value.Id_PlanMarketing + '>' + value.nombrePanMarketing + '</option>');
         });
-        
     }
     function OnErrorCall(response) { console.log(error); }
 }

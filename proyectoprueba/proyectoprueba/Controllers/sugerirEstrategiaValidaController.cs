@@ -63,6 +63,12 @@ namespace proyectoprueba.Controllers
             return Json(GetAllEstrategia(BEEstrategia), JsonRequestBehavior.AllowGet);
         }
 
+        [HttpPost]
+        public JsonResult ListarDatoEstadisticoEstrategiaObjetivo(Estrategia BEEstrategia)
+        {
+            return Json(GetAllDatoEstadisticoEstrategiaObjetivo(BEEstrategia), JsonRequestBehavior.AllowGet);
+        }
+
         #region "DAO Estrategia"
 
         private static string Config = ConfigurationManager.ConnectionStrings["cnx"].ConnectionString;
@@ -263,10 +269,44 @@ namespace proyectoprueba.Controllers
         #endregion
 
         #region "DAO DatoEstadisticoEstrategia"
-        public List<DatoEstadisticoEstrategia> GetAllDatoEstadisticoEstrategia()
+
+        public List<DatoEstadisticoEstrategia> GetAllDatoEstadisticoEstrategiaObjetivo(Estrategia BEEstrategia)
+        {
+            SqlCommand cmd = new SqlCommand("spGetDatoEstadisticoEstrategiaObjetivos", cn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.Add("@Id_Objetivo", SqlDbType.Int).Value = BEEstrategia.Id_Objetivo;
+            List<DatoEstadisticoEstrategia> list = new List<DatoEstadisticoEstrategia>();
+            cn.Open();
+            using (IDataReader dataReader = cmd.ExecuteReader())
+            {
+                while (dataReader.Read())
+                {
+                    DatoEstadisticoEstrategia obj = new DatoEstadisticoEstrategia();
+                    if (dataReader["Id_DatoEstadisticoEstrategia"] != DBNull.Value) { obj.Id_DatoEstadisticoEstrategia = (int)dataReader["Id_DatoEstadisticoEstrategia"]; }
+                    if (dataReader["idRubroAccion"] != DBNull.Value) { obj.idRubroAccion = (int)dataReader["idRubroAccion"]; }
+                    if (dataReader["Id_Estrategia"] != DBNull.Value) { obj.Id_Estrategia = (int)dataReader["Id_Estrategia"]; }
+                    if (dataReader["NombreEstadisticoEstrategia"] != DBNull.Value) { obj.NombreEstadisticoEstrategia = (string)dataReader["NombreEstrategia"]; }
+                    if (dataReader["Puntuacion"] != DBNull.Value) { obj.Puntuacion = (int)dataReader["Puntuacion"]; }
+                    if (dataReader["Porcentaje"] != DBNull.Value) { obj.Porcentaje = (int)dataReader["Porcentaje"]; }
+                    if (dataReader["Fechacumplimiento"] != DBNull.Value) { obj.Fechacumplimiento = (DateTime)dataReader["Fechacumplimiento"]; }
+                    if (dataReader["UsuarioRegistra"] != DBNull.Value) { obj.UsuarioRegistra = (string)dataReader["UsuarioRegistra"]; }
+                    if (dataReader["MaquinaRegistra"] != DBNull.Value) { obj.MaquinaRegistra = (string)dataReader["MaquinaRegistra"]; }
+                    if (dataReader["FechaRegistro"] != DBNull.Value) { obj.FechaRegistro = (DateTime)dataReader["FechaRegistro"]; }
+                    if (dataReader["UsuarioModifica"] != DBNull.Value) { obj.UsuarioModifica = (string)dataReader["UsuarioModifica"]; }
+                    if (dataReader["MaquinaModifica"] != DBNull.Value) { obj.MaquinaModifica = (string)dataReader["MaquinaModifica"]; }
+                    if (dataReader["FechaModifica"] != DBNull.Value) { obj.FechaModifica = (DateTime)dataReader["FechaModifica"]; }
+                    list.Add(obj);
+                }
+            }
+            cn.Close();
+            return list;
+        }
+
+        public List<DatoEstadisticoEstrategia> GetAllDatoEstadisticoEstrategia(DatoEstadisticoEstrategia BEDatoEstadisticoEstrategia)
         {
             SqlCommand cmd = new SqlCommand("spGetDatoEstadisticoEstrategiaAll", cn);
             cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.Add("@Id_DatoEstadisticoEstrategia", SqlDbType.Int).Value = BEDatoEstadisticoEstrategia.Id_DatoEstadisticoEstrategia;
             List<DatoEstadisticoEstrategia> list = new List<DatoEstadisticoEstrategia>();
             cn.Open();
             using (IDataReader dataReader = cmd.ExecuteReader())
