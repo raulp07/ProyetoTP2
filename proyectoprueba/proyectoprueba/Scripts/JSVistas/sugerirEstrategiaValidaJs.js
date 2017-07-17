@@ -252,7 +252,7 @@ function ListarEstrategia() {
             '</tr>';
         });
         $('#tbGeneral tbody').html(html);
-
+        
     }
 }
 function listarPlanMKT() {
@@ -303,6 +303,8 @@ function ListarRubroEstrategia(e) {
 
     }
 }
+
+$('#tbGeneral').DataTable();
 
 listarPlanMKT();
 
