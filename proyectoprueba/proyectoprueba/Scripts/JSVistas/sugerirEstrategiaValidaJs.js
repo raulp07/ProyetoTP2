@@ -8,13 +8,14 @@
 //google.charts.load('current', { 'packages': ['bar'] });
 //google.charts.setOnLoadCallback(drawChart);
 
-//function drawChart() {
+//function drawChart(_D) {
 //    var data = google.visualization.arrayToDataTable([
-//      ['Year', 'Sales', 'Expenses', 'Profit'],
-//      ['2014', 1000, 400, 200],
-//      ['2015', 1170, 460, 250],
-//      ['2016', 660, 1120, 300],
-//      ['2017', 1030, 540, 350]
+//        _D
+//      //['Year', 'Sales', 'Expenses', 'Profit'],
+//      //['2014', 1000, 400, 200],
+//      //['2015', 1170, 460, 250],
+//      //['2016', 660, 1120, 300],
+//      //['2017', 1030, 540, 350]
 //    ]);
 
 //    var options = {
@@ -30,33 +31,17 @@
 //}
 
 
-function listarPlanMKT() {
-    $.ajax({
-        type: "POST",
-        //getListOfCars is my webmethod   
-        url: "http://localhost:7382/sugerirEstrategiaValida/ListarPlanMKT",
-        //data: jsonData,
-        contentType: "application/json; charset=utf-8",
-        dataType: "json", // dataType is json format
-        success: OnSuccess,
-        error: OnErrorCall
-    });
-    function OnSuccess(response) {
-        $('#SELPMKT').html('');
-        $('#SELPMKT').append('<option>--Seleccione--</option>');
-        $.each(response, function (key, value) {
-            $('#SELPMKT').append('<option value=' + value.Id_PlanMarketing + '>' + value.nombrePanMarketing + '</option>');
-        });
-    }
-    function OnErrorCall(response) { console.log(error); }
-}
+
 
 $("#btnGuardar").on("click", function (e) {
 
     e.preventDefault();
 
-        var _date = new Date($("#dpt").val());
 
+
+
+    var _date = new Date($("#dpt").val());
+    
     var Estrategia = {
         Id_Objetivo: $("#SELOBJ").val(),
         NombreEstrategia: $("#txtnombre").val(),
@@ -77,36 +62,40 @@ $("#btnGuardar").on("click", function (e) {
     function OnSuccess(response) {
 
         if (response != 0) {
-
-            //var _date = new Date($("#dpt").val());
-            
+            var aData = [];
+            var index = 0;
             $('.ContenedorRubros .RubroEstrategia_ input').each(function (key, value) {
+
                 var Puntuacion = $(this).val() == '' ? 0 : $(this).val();
                 var idRubroAccion = this.id;
-                
                 var BEDatoEstadisticoEstrategia = {
-                    Id_Estrategia:response,
+                    Id_Estrategia: response,
                     idRubroAccion: idRubroAccion,
                     Puntuacion: Puntuacion,
                     DescripcionEstrategia: $("#txtdescripcion").val(),
                     Fechacumplimiento: _date,
-                }
-                $.ajax({
-                    type: "POST",
-                    url: "http://localhost:7382/sugerirEstrategiaValida/ADDDatoEstadisticoEstrategia",
-                    contentType: "application/json; charset=utf-8",
-                    data: "{ BEDatoEstadisticoEstrategia:" + JSON.stringify(BEDatoEstadisticoEstrategia) + "}",
-                    dataType: "json",
-                    success: OnSuccess2,
-                    error: OnErrorCall
-                });
-                function OnSuccess2(response) {
-
-                }
+                };
+                aData[index] = BEDatoEstadisticoEstrategia;
+                index++;
             });
-        }
 
-        alert('termino todo');
+            var jsonData = JSON.stringify({ BEDatoEstadisticoEstrategia: aData });
+
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:7382/sugerirEstrategiaValida/ADDDatoEstadisticoEstrategia",
+                contentType: "application/json; charset=utf-8",
+                data: jsonData,
+                dataType: "json",
+                success: OnSuccess2,
+                error: OnErrorCall
+            });
+            function OnSuccess2(response) {
+                if (response) {
+                    ListarEstrategia();
+                }
+            }
+        }
     }
     function OnErrorCall(response) { console.log(error); }
 
@@ -123,7 +112,7 @@ $('#SELPMKT').change(function (e) {
         type: "POST",
         //getListOfCars is my webmethod   
         url: "http://localhost:7382/sugerirEstrategiaValida/ListarObjetivos",
-        data: "{ PMKT:"+ JSON.stringify(PlanMarketing)+ "}",
+        data: "{ PMKT:" + JSON.stringify(PlanMarketing) + "}",
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: OnSuccess
@@ -135,41 +124,13 @@ $('#SELPMKT').change(function (e) {
         $.each(response, function (key, value) {
             $('#SELOBJ').append('<option value=' + value.Id_Objetivo + '>' + value.NombreObjetivo + '</option>');
         });
+        $('#SELOBJ').on('change', function (e) {
+            e.preventDefault();
+            ListarEstrategia(); 
+        });
     }
 
 });
-
-
-function ListarRubroEstrategia(e) {
-
-    var RubroEstrategia = {
-        Id_Objetivo: $("#SELOBJ").val()
-    }
-
-    $.ajax({
-        type: "POST",
-        url: "http://localhost:7382/sugerirEstrategiaValida/ListarRubroEstrategia",
-        data: "{ BERubroEstrategia:" + JSON.stringify(RubroEstrategia) + "}",
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: OnSuccess
-    });
-
-    function OnSuccess(response) {
-        $('.ContenedorRubros').html('');
-        var html = '';
-        $.each(response, function (key, value) {
-            html +='<div class="cell small-3">' +
-            '<label>' + value.NombreRubroEstrategia + '</label>' +
-            '</div>' +
-            '<div class="cell small-2 RubroEstrategia_">' +
-                '<input id="' + value.idRubroAccion + '" class="numeral" type="text" onkeypress="return soloNumeros(event)" maxlength="2" />' +
-            '</div>';
-        });
-        $('.ContenedorRubros').html(html);
-
-    }
-}
 
 
 $('#btnNuevo').on('click', function (e) {
@@ -190,8 +151,89 @@ function soloNumeros(e) {
     } else {
         return false;
     }
-    
+
 }
 
+function ListarEstrategia() {
+    
+
+    var BEEstrategia = {
+        Id_Objetivo: $('#SELOBJ').val()
+    }
+    var jsonData = JSON.stringify({ BEEstrategia: BEEstrategia });
+    $.ajax({
+        type: "POST",
+        url: "http://localhost:7382/sugerirEstrategiaValida/ListarEstrategia",
+        data: jsonData,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: OnSuccess
+    });
+
+    function OnSuccess(response) {
+        $('#tbGeneral tbody').html('');
+        var html = '';
+        $.each(response, function (key, value) {
+            html += '<tr>' +
+            '<td><input type="checkbox" checked /></td>' +
+            '<td>' + value.NombreEstrategia + '</td>' +
+            '<td>' + value.EstadoEstrategia + '</td>' +
+            '<td>' + value.Fechacumplimiento + '</td>' +
+            '</tr>';
+        });
+        $('#tbGeneral tbody').html(html);
+
+    }
+}
+function listarPlanMKT() {
+    $.ajax({
+        type: "POST",
+        url: "http://localhost:7382/sugerirEstrategiaValida/ListarPlanMKT",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json", 
+        success: OnSuccess,
+        error: OnErrorCall
+    });
+    function OnSuccess(response) {
+        $('#SELPMKT').html('');
+        $('#SELPMKT').append('<option>--Seleccione--</option>');
+        $.each(response, function (key, value) {
+            $('#SELPMKT').append('<option value=' + value.Id_PlanMarketing + '>' + value.nombrePanMarketing + '</option>');
+        });
+        
+    }
+    function OnErrorCall(response) { console.log(error); }
+}
+function ListarRubroEstrategia(e) {
+
+    var RubroEstrategia = {
+        Id_Objetivo: $("#SELOBJ").val()
+    }
+
+    $.ajax({
+        type: "POST",
+        url: "http://localhost:7382/sugerirEstrategiaValida/ListarRubroEstrategia",
+        data: "{ BERubroEstrategia:" + JSON.stringify(RubroEstrategia) + "}",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: OnSuccess
+    });
+
+    function OnSuccess(response) {
+        $('.ContenedorRubros').html('');
+        var html = '';
+        $.each(response, function (key, value) {
+            html += '<div class="cell small-3">' +
+            '<label>' + value.NombreRubroEstrategia + '</label>' +
+            '</div>' +
+            '<div class="cell small-2 RubroEstrategia_">' +
+                '<input id="' + value.idRubroAccion + '" class="numeral" type="text" onkeypress="return soloNumeros(event)" maxlength="2" />' +
+            '</div>';
+        });
+        $('.ContenedorRubros').html(html);
+
+    }
+}
 
 listarPlanMKT();
+

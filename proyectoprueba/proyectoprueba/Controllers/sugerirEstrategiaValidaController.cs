@@ -47,50 +47,67 @@ namespace proyectoprueba.Controllers
             return Json(GetAllRubroEstrategia(BERubroEstrategia), JsonRequestBehavior.AllowGet);
         }
         [HttpPost]
-        public JsonResult ADDDatoEstadisticoEstrategia(DatoEstadisticoEstrategia BEDatoEstadisticoEstrategia)
+        public JsonResult ADDDatoEstadisticoEstrategia(List<DatoEstadisticoEstrategia> BEDatoEstadisticoEstrategia)
         {
-            return Json(InsertDatoEstadisticoEstrategia(BEDatoEstadisticoEstrategia), JsonRequestBehavior.AllowGet);
+            bool Resultado = false;
+            foreach (DatoEstadisticoEstrategia DatoEstadisticoEstrategia in BEDatoEstadisticoEstrategia)
+            {
+                Resultado = InsertDatoEstadisticoEstrategia(DatoEstadisticoEstrategia);
+            }
+            return Json(Resultado, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult ListarEstrategia(Estrategia BEEstrategia)
+        {
+            return Json(GetAllEstrategia(BEEstrategia), JsonRequestBehavior.AllowGet);
         }
 
         #region "DAO Estrategia"
 
         private static string Config = ConfigurationManager.ConnectionStrings["cnx"].ConnectionString;
         private static SqlConnection cn = new SqlConnection(Config);
-        public List<Estrategia> GetAllEstrategia()
+        public List<Estrategia> GetAllEstrategia(Estrategia BEEstrategia)
         {
-
-
-            SqlCommand cmd = new SqlCommand("spGetEstrategiaAll", cn);
-            cmd.CommandType = CommandType.StoredProcedure;
-            List<Estrategia> list = new List<Estrategia>();
-
-            using (IDataReader dataReader = cmd.ExecuteReader())
+            try
             {
+                SqlCommand cmd = new SqlCommand("spGetEstrategiaAll", cn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@Id_Objetivo", SqlDbType.Int).Value = BEEstrategia.Id_Objetivo;
+                List<Estrategia> list = new List<Estrategia>();
+                if (cn.State == ConnectionState.Connecting || cn.State == ConnectionState.Open)
+                    cn.Close();
 
-                while (dataReader.Read())
+                cn.Open();
+                using (IDataReader dataReader = cmd.ExecuteReader())
                 {
-
-                    Estrategia obj = new Estrategia();
-
-                    if (dataReader["Id_Estrategia"] != DBNull.Value) { obj.Id_Estrategia = (int)dataReader["Id_Estrategia"]; }
-                    if (dataReader["NombreEstrategia"] != DBNull.Value) { obj.NombreEstrategia = (string)dataReader["NombreEstrategia"]; }
-                    if (dataReader["DescripcionEstrategia"] != DBNull.Value) { obj.DescripcionEstrategia = (string)dataReader["DescripcionEstrategia"]; }
-                    if (dataReader["EstadoEstrategia"] != DBNull.Value) { obj.EstadoEstrategia = (int)dataReader["EstadoEstrategia"]; }
-                    if (dataReader["Fechacumplimiento"] != DBNull.Value) { obj.Fechacumplimiento = (DateTime)dataReader["Fechacumplimiento"]; }
-                    if (dataReader["UsuarioRegistra"] != DBNull.Value) { obj.UsuarioRegistra = (string)dataReader["UsuarioRegistra"]; }
-                    if (dataReader["MaquinaRegistra"] != DBNull.Value) { obj.MaquinaRegistra = (string)dataReader["MaquinaRegistra"]; }
-                    if (dataReader["FechaRegistro"] != DBNull.Value) { obj.FechaRegistro = (DateTime)dataReader["FechaRegistro"]; }
-                    if (dataReader["UsuarioModifica"] != DBNull.Value) { obj.UsuarioModifica = (string)dataReader["UsuarioModifica"]; }
-                    if (dataReader["MaquinaModifica"] != DBNull.Value) { obj.MaquinaModifica = (string)dataReader["MaquinaModifica"]; }
-                    if (dataReader["FechaModifica"] != DBNull.Value) { obj.FechaModifica = (DateTime)dataReader["FechaModifica"]; }
-
-                    list.Add(obj);
-
+                    while (dataReader.Read())
+                    {
+                        Estrategia obj = new Estrategia();
+                        if (dataReader["Id_Estrategia"] != DBNull.Value) { obj.Id_Estrategia = (int)dataReader["Id_Estrategia"]; }
+                        if (dataReader["NombreEstrategia"] != DBNull.Value) { obj.NombreEstrategia = (string)dataReader["NombreEstrategia"]; }
+                        if (dataReader["DescripcionEstrategia"] != DBNull.Value) { obj.DescripcionEstrategia = (string)dataReader["DescripcionEstrategia"]; }
+                        if (dataReader["EstadoEstrategia"] != DBNull.Value) { obj.EstadoEstrategia = (int)dataReader["EstadoEstrategia"]; }
+                        if (dataReader["Fechacumplimiento"] != DBNull.Value) { obj.Fechacumplimiento = (DateTime)dataReader["Fechacumplimiento"]; }
+                        if (dataReader["UsuarioRegistra"] != DBNull.Value) { obj.UsuarioRegistra = (string)dataReader["UsuarioRegistra"]; }
+                        if (dataReader["MaquinaRegistra"] != DBNull.Value) { obj.MaquinaRegistra = (string)dataReader["MaquinaRegistra"]; }
+                        if (dataReader["FechaRegistro"] != DBNull.Value) { obj.FechaRegistro = (DateTime)dataReader["FechaRegistro"]; }
+                        if (dataReader["UsuarioModifica"] != DBNull.Value) { obj.UsuarioModifica = (string)dataReader["UsuarioModifica"]; }
+                        if (dataReader["MaquinaModifica"] != DBNull.Value) { obj.MaquinaModifica = (string)dataReader["MaquinaModifica"]; }
+                        if (dataReader["FechaModifica"] != DBNull.Value) { obj.FechaModifica = (DateTime)dataReader["FechaModifica"]; }
+                        list.Add(obj);
+                    }
                 }
-
+                return list;
             }
-
-            return list;
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                cn.Close();
+            }
 
         }
 
@@ -161,32 +178,47 @@ namespace proyectoprueba.Controllers
         #region "DAO Plan de Marketing"
         public List<PlanMarketing> GetAllPlanMarketing()
         {
-            SqlCommand cmd = new SqlCommand("spGetPlanMarketingAll", cn);
-            cmd.CommandType = CommandType.StoredProcedure;
-            List<PlanMarketing> list = new List<PlanMarketing>();
-            cn.Open();
-            using (IDataReader dataReader = cmd.ExecuteReader())
+            try
             {
-                while (dataReader.Read())
+                SqlCommand cmd = new SqlCommand("spGetPlanMarketingAll", cn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                List<PlanMarketing> list = new List<PlanMarketing>();
+                if (cn.State == ConnectionState.Connecting || cn.State == ConnectionState.Open)
+                    cn.Close();
+
+                cn.Open();
+                using (IDataReader dataReader = cmd.ExecuteReader())
                 {
-                    PlanMarketing obj = new PlanMarketing();
-                    if (dataReader["Id_PlanMarketing"] != DBNull.Value) { obj.Id_PlanMarketing = (int)dataReader["Id_PlanMarketing"]; }
-                    if (dataReader["nombrePanMarketing"] != DBNull.Value) { obj.nombrePanMarketing = (string)dataReader["nombrePanMarketing"]; }
-                    if (dataReader["descrípcion"] != DBNull.Value) { obj.descrípcion = (string)dataReader["descrípcion"]; }
-                    if (dataReader["fechaIni"] != DBNull.Value) { obj.fechaIni = (DateTime)dataReader["fechaIni"]; }
-                    if (dataReader["fechaFin"] != DBNull.Value) { obj.fechaFin = (DateTime)dataReader["fechaFin"]; }
-                    if (dataReader["presupuesto"] != DBNull.Value) { obj.presupuesto = (decimal)dataReader["presupuesto"]; }
-                    if (dataReader["UsuarioRegistra"] != DBNull.Value) { obj.UsuarioRegistra = (string)dataReader["UsuarioRegistra"]; }
-                    if (dataReader["MaquinaRegistra"] != DBNull.Value) { obj.MaquinaRegistra = (string)dataReader["MaquinaRegistra"]; }
-                    if (dataReader["FechaRegistro"] != DBNull.Value) { obj.FechaRegistro = (DateTime)dataReader["FechaRegistro"]; }
-                    if (dataReader["UsuarioModifica"] != DBNull.Value) { obj.UsuarioModifica = (string)dataReader["UsuarioModifica"]; }
-                    if (dataReader["MaquinaModifica"] != DBNull.Value) { obj.MaquinaModifica = (string)dataReader["MaquinaModifica"]; }
-                    if (dataReader["FechaModifica"] != DBNull.Value) { obj.FechaModifica = (DateTime)dataReader["FechaModifica"]; }
-                    list.Add(obj);
+                    while (dataReader.Read())
+                    {
+                        PlanMarketing obj = new PlanMarketing();
+                        if (dataReader["Id_PlanMarketing"] != DBNull.Value) { obj.Id_PlanMarketing = (int)dataReader["Id_PlanMarketing"]; }
+                        if (dataReader["nombrePanMarketing"] != DBNull.Value) { obj.nombrePanMarketing = (string)dataReader["nombrePanMarketing"]; }
+                        if (dataReader["descrípcion"] != DBNull.Value) { obj.descrípcion = (string)dataReader["descrípcion"]; }
+                        if (dataReader["fechaIni"] != DBNull.Value) { obj.fechaIni = (DateTime)dataReader["fechaIni"]; }
+                        if (dataReader["fechaFin"] != DBNull.Value) { obj.fechaFin = (DateTime)dataReader["fechaFin"]; }
+                        if (dataReader["presupuesto"] != DBNull.Value) { obj.presupuesto = (decimal)dataReader["presupuesto"]; }
+                        if (dataReader["UsuarioRegistra"] != DBNull.Value) { obj.UsuarioRegistra = (string)dataReader["UsuarioRegistra"]; }
+                        if (dataReader["MaquinaRegistra"] != DBNull.Value) { obj.MaquinaRegistra = (string)dataReader["MaquinaRegistra"]; }
+                        if (dataReader["FechaRegistro"] != DBNull.Value) { obj.FechaRegistro = (DateTime)dataReader["FechaRegistro"]; }
+                        if (dataReader["UsuarioModifica"] != DBNull.Value) { obj.UsuarioModifica = (string)dataReader["UsuarioModifica"]; }
+                        if (dataReader["MaquinaModifica"] != DBNull.Value) { obj.MaquinaModifica = (string)dataReader["MaquinaModifica"]; }
+                        if (dataReader["FechaModifica"] != DBNull.Value) { obj.FechaModifica = (DateTime)dataReader["FechaModifica"]; }
+                        list.Add(obj);
+                    }
                 }
+                return list;
             }
-            cn.Close();
-            return list;
+            catch (Exception)
+            {
+
+                throw;
+            }
+            finally
+            {
+                cn.Close();
+            }
+
         }
 
         #endregion
@@ -272,7 +304,7 @@ namespace proyectoprueba.Controllers
         public bool InsertDatoEstadisticoEstrategia(DatoEstadisticoEstrategia BEDatoEstadisticoEstrategia)
         {
             SqlCommand cmd;
-            
+            int resultado = 0;
             try
             {
                 if (cn.State == ConnectionState.Closed)
@@ -293,14 +325,18 @@ namespace proyectoprueba.Controllers
                     cmd.Parameters.Add("@UsuarioModifica", SqlDbType.VarChar).Value = Environment.UserName;
                     cmd.Parameters.Add("@MaquinaModifica", SqlDbType.VarChar).Value = Environment.UserDomainName;
                     cmd.Parameters.Add("@FechaModifica", SqlDbType.DateTime).Value = DateTime.Today;
-                    cmd.ExecuteNonQuery();
+                    resultado = cmd.ExecuteNonQuery();
                 }
-                return ( 1== 1);
+                return (resultado == 1);
             }
             catch (Exception)
             {
 
                 throw;
+            }
+            finally
+            {
+                cn.Close();
             }
 
         }
@@ -353,6 +389,7 @@ namespace proyectoprueba.Controllers
 
         public List<RubroEstrategia> GetAllRubroEstrategia(RubroEstrategia BERubroEstrategia)
         {
+
             SqlCommand cmd = new SqlCommand("spGetRubroEstrategiaAll", cn);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.Add("@idRubroAccion", SqlDbType.Int).Value = BERubroEstrategia.idRubroAccion;
