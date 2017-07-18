@@ -44,12 +44,16 @@ namespace proyectoprueba.Controllers
         [HttpPost]
         public JsonResult UPDEstrategia(Estrategia BEEstrategia, List<DatoEstadisticoEstrategia> BEDatoEstadisticoEstrategia)
         {
+            bool Resultado = false;
             if (UpdateEstrategia(BEEstrategia))
-            {
-                
+            {                
+                foreach (DatoEstadisticoEstrategia DatoEstadisticoEstrategia in BEDatoEstadisticoEstrategia)
+                {
+                    Resultado = InsertDatoEstadisticoEstrategia(DatoEstadisticoEstrategia);
+                }                
             }
 
-            return Json(UpdateEstrategia(BEEstrategia), JsonRequestBehavior.AllowGet);
+            return Json(Resultado, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -184,17 +188,18 @@ namespace proyectoprueba.Controllers
                 using (cmd = new SqlCommand("spUpdateEstrategia", cn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.Add("Id_Estrategia", SqlDbType.Int).Value = BEEstrategia.Id_Estrategia;
-                    cmd.Parameters.Add("NombreEstrategia", SqlDbType.VarChar).Value = BEEstrategia.NombreEstrategia;
-                    cmd.Parameters.Add("DescripcionEstrategia", SqlDbType.VarChar).Value = BEEstrategia.DescripcionEstrategia;
-                    cmd.Parameters.Add("EstadoEstrategia", SqlDbType.Int).Value = BEEstrategia.EstadoEstrategia;
-                    cmd.Parameters.Add("Fechacumplimiento", SqlDbType.DateTime).Value = BEEstrategia.Fechacumplimiento;
-                    cmd.Parameters.Add("UsuarioRegistra", SqlDbType.VarChar).Value = Environment.UserName;
-                    cmd.Parameters.Add("MaquinaRegistra", SqlDbType.VarChar).Value = Environment.UserDomainName; ;
-                    cmd.Parameters.Add("FechaRegistro", SqlDbType.DateTime).Value = DateTime.Today;
-                    cmd.Parameters.Add("UsuarioModifica", SqlDbType.VarChar).Value = Environment.UserName;
-                    cmd.Parameters.Add("MaquinaModifica", SqlDbType.VarChar).Value = Environment.UserDomainName; ;
-                    cmd.Parameters.Add("FechaModifica", SqlDbType.DateTime).Value = BEEstrategia.FechaModifica;
+                    cmd.Parameters.Add("@Id_Estrategia", SqlDbType.Int).Value = BEEstrategia.Id_Estrategia;
+                    cmd.Parameters.Add("@Id_Objetivo", SqlDbType.Int).Value = BEEstrategia.Id_Objetivo;
+                    cmd.Parameters.Add("@NombreEstrategia", SqlDbType.VarChar).Value = BEEstrategia.NombreEstrategia;
+                    cmd.Parameters.Add("@DescripcionEstrategia", SqlDbType.VarChar).Value = BEEstrategia.DescripcionEstrategia;
+                    cmd.Parameters.Add("@EstadoEstrategia", SqlDbType.Int).Value = BEEstrategia.EstadoEstrategia;
+                    cmd.Parameters.Add("@Fechacumplimiento", SqlDbType.DateTime).Value = BEEstrategia.Fechacumplimiento;
+                    cmd.Parameters.Add("@UsuarioRegistra", SqlDbType.VarChar).Value = Environment.UserName;
+                    cmd.Parameters.Add("@MaquinaRegistra", SqlDbType.VarChar).Value = Environment.UserDomainName; ;
+                    cmd.Parameters.Add("@FechaRegistro", SqlDbType.DateTime).Value = DateTime.Now;
+                    cmd.Parameters.Add("@UsuarioModifica", SqlDbType.VarChar).Value = Environment.UserName;
+                    cmd.Parameters.Add("@MaquinaModifica", SqlDbType.VarChar).Value = Environment.UserDomainName; ;
+                    cmd.Parameters.Add("@FechaModifica", SqlDbType.DateTime).Value = DateTime.Now;
                 }
                 return (cmd.ExecuteNonQuery() == 1);
             }

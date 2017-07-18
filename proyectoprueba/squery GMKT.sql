@@ -603,6 +603,9 @@ WHERE
 Id_Estrategia = @Id_Estrategia
 END
 
+delete from DatoEstadisticoEstrategia where Id_Estrategia = @Id_Estrategia
+
+
 Go
 IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'spDeleteEstrategia')
 begin

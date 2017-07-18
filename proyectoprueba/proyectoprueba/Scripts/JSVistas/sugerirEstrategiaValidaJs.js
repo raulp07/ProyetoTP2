@@ -9,7 +9,6 @@ google.charts.load('current', { 'packages': ['bar'] });
 //google.charts.setOnLoadCallback(drawChart);
 
 function drawChart(_data) {
-    debugger;
     var fffff = JSON.parse(_data);
     console.log(fffff);
     var data = google.visualization.arrayToDataTable(fffff);
@@ -33,66 +32,111 @@ $("#btnGuardar").on("click", function (e) {
     e.preventDefault();
 
 
+    var idEstrategia = $('#hdIDEstrategia').val();
 
 
     var _date = new Date($("#dpt").val());
 
-    var Estrategia = {
-        Id_Objetivo: $("#SELOBJ").val(),
-        NombreEstrategia: $("#txtnombre").val(),
-        DescripcionEstrategia: $("#txtdescripcion").val(),
-        Fechacumplimiento: _date,
-    }
+    if (idEstrategia != 0) {
 
-    $.ajax({
-        type: "POST",
-        url: "http://localhost:7382/sugerirEstrategiaValida/ADDEstrategia",
-        contentType: "application/json; charset=utf-8",
-        data: "{ BEEstrategia:" + JSON.stringify(Estrategia) + "}",
-        dataType: "json",
-        success: OnSuccess,
-        error: OnErrorCall
-    });
+        var Estrategia = {
+            Id_Estrategia: idEstrategia,
+            Id_Objetivo: $("#SELOBJ").val(),
+            NombreEstrategia: $("#txtnombre").val(),
+            DescripcionEstrategia: $("#txtdescripcion").val(),
+            Fechacumplimiento: _date,
+        }
 
-    function OnSuccess(response) {
+        var aData = [];
+        var index = 0;
+        $('.ContenedorRubros .RubroEstrategia_ input').each(function (key, value) {
+            var Puntuacion = $(this).val() == '' ? 0 : $(this).val();
+            var idRubroAccion = this.id;
+            var BEDatoEstadisticoEstrategia = {
+                Id_Estrategia: idEstrategia,
+                idRubroAccion: idRubroAccion,
+                Puntuacion: Puntuacion,
+                DescripcionEstrategia: $("#txtdescripcion").val(),
+                Fechacumplimiento: _date,
+            };
+            aData[index] = BEDatoEstadisticoEstrategia;
+            index++;
+        });
 
-        if (response != 0) {
-            var aData = [];
-            var index = 0;
-            $('.ContenedorRubros .RubroEstrategia_ input').each(function (key, value) {
+        var jsonData = JSON.stringify({ BEEstrategia: Estrategia, BEDatoEstadisticoEstrategia: aData });
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:7382/sugerirEstrategiaValida/UPDEstrategia",
+            contentType: "application/json; charset=utf-8",
+            data: jsonData,
+            dataType: "json",
+            success: OnSuccess,
+            error: OnErrorCall
+        });
+        function OnSuccess(response) {
+            if (response) {
+                ListarEstrategia();
+            }
+        }
 
-                var Puntuacion = $(this).val() == '' ? 0 : $(this).val();
-                var idRubroAccion = this.id;
-                var BEDatoEstadisticoEstrategia = {
-                    Id_Estrategia: response,
-                    idRubroAccion: idRubroAccion,
-                    Puntuacion: Puntuacion,
-                    DescripcionEstrategia: $("#txtdescripcion").val(),
-                    Fechacumplimiento: _date,
-                };
-                aData[index] = BEDatoEstadisticoEstrategia;
-                index++;
-            });
+    } else {
+        var Estrategia = {
+            Id_Objetivo: $("#SELOBJ").val(),
+            NombreEstrategia: $("#txtnombre").val(),
+            DescripcionEstrategia: $("#txtdescripcion").val(),
+            Fechacumplimiento: _date,
+        }
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:7382/sugerirEstrategiaValida/ADDEstrategia",
+            contentType: "application/json; charset=utf-8",
+            data: "{ BEEstrategia:" + JSON.stringify(Estrategia) + "}",
+            dataType: "json",
+            success: OnSuccess,
+            error: OnErrorCall
+        });
 
-            var jsonData = JSON.stringify({ BEDatoEstadisticoEstrategia: aData });
+        function OnSuccess(response) {
 
-            $.ajax({
-                type: "POST",
-                url: "http://localhost:7382/sugerirEstrategiaValida/ADDDatoEstadisticoEstrategia",
-                contentType: "application/json; charset=utf-8",
-                data: jsonData,
-                dataType: "json",
-                success: OnSuccess2,
-                error: OnErrorCall
-            });
-            function OnSuccess2(response) {
-                if (response) {
-                    ListarEstrategia();
+            if (response != 0) {
+                var aData = [];
+                var index = 0;
+                $('.ContenedorRubros .RubroEstrategia_ input').each(function (key, value) {
+
+                    var Puntuacion = $(this).val() == '' ? 0 : $(this).val();
+                    var idRubroAccion = this.id;
+                    var BEDatoEstadisticoEstrategia = {
+                        Id_Estrategia: response,
+                        idRubroAccion: idRubroAccion,
+                        Puntuacion: Puntuacion,
+                        DescripcionEstrategia: $("#txtdescripcion").val(),
+                        Fechacumplimiento: _date,
+                    };
+                    aData[index] = BEDatoEstadisticoEstrategia;
+                    index++;
+                });
+
+                var jsonData = JSON.stringify({ BEDatoEstadisticoEstrategia: aData });
+
+                $.ajax({
+                    type: "POST",
+                    url: "http://localhost:7382/sugerirEstrategiaValida/ADDDatoEstadisticoEstrategia",
+                    contentType: "application/json; charset=utf-8",
+                    data: jsonData,
+                    dataType: "json",
+                    success: OnSuccess2,
+                    error: OnErrorCall
+                });
+                function OnSuccess2(response) {
+                    if (response) {
+                        ListarEstrategia();
+                    }
                 }
             }
         }
+        function OnErrorCall(response) { console.log(error); }
     }
-    function OnErrorCall(response) { console.log(error); }
+
 
 });
 
@@ -131,6 +175,10 @@ $('#SELPMKT').change(function (e) {
 
 $('#btnNuevo').on('click', function (e) {
     $('#tituloObj h3').text('Estrategia para cumplir el objetivo de ' + $('#SELOBJ option:selected').text());
+
+    $('#txtnombre').val('');
+    $('#txtdescripcion').val('');
+
     ListarRubroEstrategia();
 });
 
@@ -257,8 +305,14 @@ function ListarEstrategia() {
         });
         $('#tbGeneral tbody').html(html);
 
+
+        
+
+
         $('.btnEditar').on('click', function () {
-            var Id_Estrategia=$(this).attr('data-Est');
+            var Id_Estrategia = $(this).attr('data-Est');
+
+            $('#hdIDEstrategia').val(Id_Estrategia);
             var BEEstrategia = {
                 Id_Estrategia: Id_Estrategia
             }
@@ -299,7 +353,7 @@ function ListarEstrategia() {
                 }
             }
         });
-
+        ListarRubroEstrategia();
     }
 }
 function listarPlanMKT() {
@@ -320,7 +374,7 @@ function listarPlanMKT() {
     }
     function OnErrorCall(response) { console.log(error); }
 }
-function ListarRubroEstrategia(e) {
+function ListarRubroEstrategia() {
 
     var RubroEstrategia = {
         Id_Objetivo: $("#SELOBJ").val()
