@@ -258,19 +258,21 @@ $('#btnSugerir').on('click', function (e) {
 
             data = '[' + ArrayCabezera + data + ']';
 
+            google.charts.setOnLoadCallback(drawChart(data));
+
             var fffff = JSON.parse(data);
 
             var asda = '';
             var textomostrar = '';
             $.each(fffff, function (key, value) {
                 if (key >0) {
-                    textomostrar += value[0];
-                    textomostrar += " Esperado " + value[1];
+                    textomostrar +="En rubro => "+ value[0];
+                    textomostrar += " el valor esperado  es " + value[1];
                     for (var i = 2; i < value.length; i++) {
                         if (value[1] > value[i]) {
-                            textomostrar += " Falta " + (value[1] - value[i]);
+                            textomostrar += "  y Falta " + (value[1] - value[i]) ;
                         } else {
-                            textomostrar += " sobrante " + (value[i] - value[1]);
+                            textomostrar += " y sobra " + (value[i] - value[1]) ;
                         }
                     }
                     textomostrar += '</br>';
@@ -279,8 +281,6 @@ $('#btnSugerir').on('click', function (e) {
             debugger;
             $('#TextoShow').html(textomostrar);
             
-
-            google.charts.setOnLoadCallback(drawChart(data));
         }
 
 
