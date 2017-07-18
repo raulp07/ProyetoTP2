@@ -31,7 +31,6 @@ D:\UPC\desarrollo\GIT_TP2\proyectoprueba\proyectoprueba\bin\WebGrease.dll
 D:\UPC\desarrollo\GIT_TP2\proyectoprueba\proyectoprueba\bin\WebMatrix.Data.dll
 D:\UPC\desarrollo\GIT_TP2\proyectoprueba\proyectoprueba\bin\WebMatrix.WebData.dll
 D:\UPC\desarrollo\GIT_TP2\proyectoprueba\proyectoprueba\bin\EntityFramework.xml
-D:\UPC\desarrollo\GIT_TP2\proyectoprueba\proyectoprueba\bin\Newtonsoft.Json.xml
 D:\UPC\desarrollo\GIT_TP2\proyectoprueba\proyectoprueba\bin\System.Net.Http.Formatting.xml
 D:\UPC\desarrollo\GIT_TP2\proyectoprueba\proyectoprueba\bin\System.Web.Helpers.xml
 D:\UPC\desarrollo\GIT_TP2\proyectoprueba\proyectoprueba\bin\System.Web.Http.xml

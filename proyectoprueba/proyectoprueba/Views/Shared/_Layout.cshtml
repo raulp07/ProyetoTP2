@@ -36,21 +36,23 @@
     <body>
         <header>
             <div class="content-wrapper">
-                <div class="float-left">
-                    <p class="site-title">@Html.ActionLink("your logo here", "Index", "Home")</p>
+                <div class="float-left ">
+                    <p class="site-title"><h1> @Html.ActionLink("SIS GMKT", "Index", "Home")</h1></p>
                 </div>
-                <div class="float-right">
-                    <section id="login">
-                        @Html.Partial("_LoginPartial")
-                    </section>
-                    <nav>
-                        <ul id="menu">
-                            <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                            <li>@Html.ActionLink("About", "About", "Home")</li>
-                            <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
-                        </ul>
-                    </nav>
-                </div>
+                
+            </div>
+            <div class="content-wrapper float-left">
+                <section id="login">
+                    @*@Html.Partial("_LoginPartial")*@
+                </section>
+                <nav>
+                    <ul id="menu">
+                        <li>@Html.ActionLink("Plan Marketing", "Index", "Home")</li>
+                        <li>@Html.ActionLink("Rubros", "Index", "Home")</li>
+                        <li>@Html.ActionLink("Sugerencia Estrategia", "Index", "sugerirEstrategiaValida")</li>
+                        <li>@Html.ActionLink("Sugerencia Acción", "Index", "Home")</li>
+                    </ul>
+                </nav>
             </div>
         </header>
         <div id="body" >
@@ -63,7 +65,7 @@
         <footer>
             <div class="content-wrapper">
                 <div class="float-left">
-                    <p>&copy; @DateTime.Now.Year - My ASP.NET MVC Application</p>
+                    <p>&copy; @DateTime.Now.Year - MY Sefiroth Application</p>
                 </div>
             </div>
         </footer>

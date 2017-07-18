@@ -103,8 +103,6 @@ namespace proyectoprueba.Controllers
                 cmd.Parameters.Add("@Id_Estrategia", SqlDbType.Int).Value = BEEstrategia.Id_Estrategia;
                 cmd.Parameters.Add("@Id_Objetivo", SqlDbType.Int).Value = BEEstrategia.Id_Objetivo;
                 List<Estrategia> list = new List<Estrategia>();
-                if (cn.State == ConnectionState.Connecting || cn.State == ConnectionState.Open)
-                    cn.Close();
 
                 cn.Open();
                 using (IDataReader dataReader = cmd.ExecuteReader())
@@ -117,7 +115,7 @@ namespace proyectoprueba.Controllers
                         if (dataReader["DescripcionEstrategia"] != DBNull.Value) { obj.DescripcionEstrategia = (string)dataReader["DescripcionEstrategia"]; }
                         if (dataReader["EstadoEstrategia"] != DBNull.Value) { obj.EstadoEstrategia = (int)dataReader["EstadoEstrategia"]; }
                         if (dataReader["Fechacumplimiento"] != DBNull.Value) { obj.Fechacumplimiento = (DateTime)dataReader["Fechacumplimiento"]; }
-                        if (dataReader["UsuarioRegistra"] != DBNull.Value) { obj.UsuarioRegistra = Convert.ToString((DateTime)dataReader["Fechacumplimiento"]); }
+                        if (dataReader["UsuarioRegistra"] != DBNull.Value) { obj.UsuarioRegistra = (string)dataReader["UsuarioRegistra"]; }
                         if (dataReader["MaquinaRegistra"] != DBNull.Value) { obj.MaquinaRegistra = (string)dataReader["MaquinaRegistra"]; }
                         if (dataReader["FechaRegistro"] != DBNull.Value) { obj.FechaRegistro = (DateTime)dataReader["FechaRegistro"]; }
                         if (dataReader["UsuarioModifica"] != DBNull.Value) { obj.UsuarioModifica = (string)dataReader["UsuarioModifica"]; }
@@ -201,7 +199,8 @@ namespace proyectoprueba.Controllers
                     cmd.Parameters.Add("@MaquinaModifica", SqlDbType.VarChar).Value = Environment.UserDomainName; ;
                     cmd.Parameters.Add("@FechaModifica", SqlDbType.DateTime).Value = DateTime.Now;
                 }
-                return (cmd.ExecuteNonQuery() == 1);
+                cmd.ExecuteNonQuery();
+                return true;
             }
             catch (Exception)
             {
