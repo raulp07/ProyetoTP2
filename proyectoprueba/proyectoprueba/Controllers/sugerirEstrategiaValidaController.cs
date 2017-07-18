@@ -117,7 +117,7 @@ namespace proyectoprueba.Controllers
                         if (dataReader["DescripcionEstrategia"] != DBNull.Value) { obj.DescripcionEstrategia = (string)dataReader["DescripcionEstrategia"]; }
                         if (dataReader["EstadoEstrategia"] != DBNull.Value) { obj.EstadoEstrategia = (int)dataReader["EstadoEstrategia"]; }
                         if (dataReader["Fechacumplimiento"] != DBNull.Value) { obj.Fechacumplimiento = (DateTime)dataReader["Fechacumplimiento"]; }
-                        if (dataReader["UsuarioRegistra"] != DBNull.Value) { obj.UsuarioRegistra = (string)dataReader["UsuarioRegistra"]; }
+                        if (dataReader["UsuarioRegistra"] != DBNull.Value) { obj.UsuarioRegistra = Convert.ToString((DateTime)dataReader["Fechacumplimiento"]); }
                         if (dataReader["MaquinaRegistra"] != DBNull.Value) { obj.MaquinaRegistra = (string)dataReader["MaquinaRegistra"]; }
                         if (dataReader["FechaRegistro"] != DBNull.Value) { obj.FechaRegistro = (DateTime)dataReader["FechaRegistro"]; }
                         if (dataReader["UsuarioModifica"] != DBNull.Value) { obj.UsuarioModifica = (string)dataReader["UsuarioModifica"]; }

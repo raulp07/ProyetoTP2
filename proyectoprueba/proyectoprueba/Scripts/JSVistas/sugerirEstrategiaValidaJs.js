@@ -257,6 +257,29 @@ $('#btnSugerir').on('click', function (e) {
             data = data.substring(0, data.length - 1);
 
             data = '[' + ArrayCabezera + data + ']';
+
+            var fffff = JSON.parse(data);
+
+            var asda = '';
+            var textomostrar = '';
+            $.each(fffff, function (key, value) {
+                if (key >0) {
+                    textomostrar += value[0];
+                    textomostrar += " Esperado " + value[1];
+                    for (var i = 2; i < value.length; i++) {
+                        if (value[1] > value[i]) {
+                            textomostrar += " Falta " + (value[1] - value[i]);
+                        } else {
+                            textomostrar += " sobrante " + (value[i] - value[1]);
+                        }
+                    }
+                    textomostrar += '</br>';
+                }
+            });
+            debugger;
+            $('#TextoShow').html(textomostrar);
+            
+
             google.charts.setOnLoadCallback(drawChart(data));
         }
 
@@ -308,11 +331,14 @@ function ListarEstrategia() {
         $('#tbGeneral tbody').html('');
         var html = '';
         $.each(response, function (key, value) {
+            var date = new Date(parseInt(value.Fechacumplimiento.substr(6)));
+            var displayDate = date.getMonth() + "/" + date.getDate() + "/" + date.getFullYear();
+
             html += '<tr>' +
             '<td><input type="checkbox" checked /></td>' +
             '<td>' + value.NombreEstrategia + '</td>' +
-            '<td>' + value.EstadoEstrategia + '</td>' +
-            //'<td>' + Date(value.Fechacumplimiento); + '</td>' +
+            '<td>' + (value.EstadoEstrategia == 0? "Registrado":"Sugerido") + '</td>' +
+            '<td>' + displayDate + '</td>' +
             '<td> <a href="#" id="btnEditar" class="btnEditar" data-Est="' + value.Id_Estrategia + '"  data-open="exampleModal11">Editar</a> </td>' +
             '</tr>';
         });
@@ -343,6 +369,10 @@ function ListarEstrategia() {
                 $.each(response, function (keu, value) {
                     $('#txtnombre').val(value.NombreEstrategia);
                     $('#txtdescripcion').val(value.DescripcionEstrategia);
+                    var date = new Date(parseInt(value.Fechacumplimiento.substr(6)));
+                    var displayDate = date.getMonth() + "/" + date.getDate() + "/" + date.getFullYear();
+                    $('#dpt').val(displayDate);
+                    //$("#datepicker").datepicker("setDate", '2017-08-25');
                 });
 
                 var jsonData = JSON.stringify({ BEDatoEstadisticoEstrategia: BEEstrategia });
