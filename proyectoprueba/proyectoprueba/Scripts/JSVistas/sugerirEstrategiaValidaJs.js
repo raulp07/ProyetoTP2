@@ -1,8 +1,24 @@
-﻿$('#dpt').fdatepicker({
-    format: 'mm-dd-yyyy',
-    disableDblClickSelection: true,
-    language: 'vi'
-});
+﻿//$('#dpt').fdatepicker({
+//    format: 'mm-dd-yyyy',
+//    disableDblClickSelection: true,
+//    language: 'vi'
+//});
+
+
+var nowTemp = new Date();
+var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+var checkin = $('#dpt').fdatepicker({
+    onRender: function (date) {
+        return date.valueOf() < now.valueOf() ? 'disabled' : '';
+    }
+}).on('changeDate', function (ev) {
+    if (ev.date.valueOf() > checkout.date.valueOf()) {
+        var newDate = new Date(ev.date)
+        newDate.setDate(newDate.getDate() + 1);
+        checkout.update(newDate);
+    }
+    checkin.hide();
+}).data('datepicker');
 
 
 google.charts.load('current', { 'packages': ['bar'] });
@@ -21,10 +37,7 @@ function drawChart(_data) {
     var chart = new google.charts.Bar(document.getElementById('columnchart_material'));
 
     chart.draw(data, google.charts.Bar.convertOptions(options));
-
 }
-
-
 
 
 $("#btnGuardar").on("click", function (e) {

@@ -585,25 +585,28 @@ CREATE PROCEDURE [spUpdateEstrategia]
 @FechaModifica datetime
 AS
 BEGIN
-UPDATE
-Estrategia
-SET
-Id_Objetivo = @Id_Objetivo,
-NombreEstrategia = @NombreEstrategia,
-DescripcionEstrategia = @DescripcionEstrategia,
-EstadoEstrategia = @EstadoEstrategia,
-Fechacumplimiento = @Fechacumplimiento,
-UsuarioRegistra = @UsuarioRegistra,
-MaquinaRegistra = @MaquinaRegistra,
-FechaRegistro = @FechaRegistro,
-UsuarioModifica = @UsuarioModifica,
-MaquinaModifica = @MaquinaModifica,
-FechaModifica = @FechaModifica
-WHERE
-Id_Estrategia = @Id_Estrategia
+	UPDATE
+	Estrategia
+	SET
+	Id_Objetivo = @Id_Objetivo,
+	NombreEstrategia = @NombreEstrategia,
+	DescripcionEstrategia = @DescripcionEstrategia,
+	EstadoEstrategia = @EstadoEstrategia,
+	Fechacumplimiento = @Fechacumplimiento,
+	UsuarioRegistra = @UsuarioRegistra,
+	MaquinaRegistra = @MaquinaRegistra,
+	FechaRegistro = @FechaRegistro,
+	UsuarioModifica = @UsuarioModifica,
+	MaquinaModifica = @MaquinaModifica,
+	FechaModifica = @FechaModifica
+	WHERE
+	Id_Estrategia = @Id_Estrategia
+
+	delete from DatoEstadisticoEstrategia where Id_Estrategia = @Id_Estrategia
+
 END
 
-delete from DatoEstadisticoEstrategia where Id_Estrategia = @Id_Estrategia
+
 
 
 Go
