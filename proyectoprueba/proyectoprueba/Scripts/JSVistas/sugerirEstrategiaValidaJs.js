@@ -9,6 +9,7 @@ google.charts.load('current', { 'packages': ['bar'] });
 //google.charts.setOnLoadCallback(drawChart);
 
 function drawChart(_data) {
+    debugger;
     var fffff = JSON.parse(_data);
     console.log(fffff);
     var data = google.visualization.arrayToDataTable(fffff);
@@ -121,6 +122,7 @@ $('#SELPMKT').change(function (e) {
         $('#SELOBJ').on('change', function (e) {
             e.preventDefault();
             ListarEstrategia();
+
         });
     }
 
@@ -163,10 +165,11 @@ $('#btnSugerir').on('click', function (e) {
 
         function OnSuccess(response2) {
 
+
             //Cabezera
             var ArrayCabezera = '';
             var Cabezera = 0;
-            ArrayCabezera = '["Rubro",';
+            ArrayCabezera = '["Rubro","Esperado",';
             $.each(response2, function (key, value2) {
                 if (Cabezera != value2.Id_Estrategia) {
                     Cabezera = value2.Id_Estrategia
@@ -176,10 +179,12 @@ $('#btnSugerir').on('click', function (e) {
 
             ArrayCabezera = ArrayCabezera.substring(0, ArrayCabezera.length - 1);
             ArrayCabezera += '],';
+            
             //Cuerpo
             var data = '';
             $.each(response, function (key, value1) {
                 data += '["' + value1.NombreRubroEstrategia + '",';
+                data += value1.PorcentajeImportancia +','
                 $.each(response2, function (key, value2) {
                     if (value1.idRubroAccion == value2.idRubroAccion) {
                         data += value2.Puntuacion + ',';
@@ -189,8 +194,6 @@ $('#btnSugerir').on('click', function (e) {
                 data += '],';
             });
             data = data.substring(0, data.length - 1);
-
-
 
             data = '[' + ArrayCabezera + data + ']';
             google.charts.setOnLoadCallback(drawChart(data));
@@ -244,16 +247,58 @@ function ListarEstrategia() {
         $('#tbGeneral tbody').html('');
         var html = '';
         $.each(response, function (key, value) {
-
-
             html += '<tr>' +
             '<td><input type="checkbox" checked /></td>' +
             '<td>' + value.NombreEstrategia + '</td>' +
             '<td>' + value.EstadoEstrategia + '</td>' +
-            '<td>' + Date(value.Fechacumplimiento); + '</td>' +
+            //'<td>' + Date(value.Fechacumplimiento); + '</td>' +
+            '<td> <a href="#" id="btnEditar" class="btnEditar" data-Est="' + value.Id_Estrategia + '"  data-open="exampleModal11">Editar</a> </td>' +
             '</tr>';
         });
         $('#tbGeneral tbody').html(html);
+
+        $('.btnEditar').on('click', function () {
+            var Id_Estrategia=$(this).attr('data-Est');
+            var BEEstrategia = {
+                Id_Estrategia: Id_Estrategia
+            }
+            var jsonData = JSON.stringify({ BEEstrategia: BEEstrategia });
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:7382/sugerirEstrategiaValida/ListarEstrategia",
+                data: jsonData,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: OnSuccess
+            });
+            function OnSuccess(response) {
+
+                $.each(response, function (keu, value) {
+                    $('#txtnombre').val(value.NombreEstrategia);
+                    $('#txtdescripcion').val(value.DescripcionEstrategia);
+                });
+
+                var jsonData = JSON.stringify({ BEDatoEstadisticoEstrategia: BEEstrategia });
+                $.ajax({
+                    type: "POST",
+                    url: "http://localhost:7382/sugerirEstrategiaValida/ListarDatoEstadisticoEstrategia",
+                    data: jsonData,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: OnSuccess
+                });
+                function OnSuccess(response2) {
+                    $('.ContenedorRubros .numeral').each(function () {
+                        var _id = this.id;
+                        $.each(response2, function (key, value) {
+                            if (_id == value.idRubroAccion) {
+                                $('#' + _id).val(value.Puntuacion);
+                            }
+                        });
+                    });
+                }
+            }
+        });
 
     }
 }
@@ -289,7 +334,6 @@ function ListarRubroEstrategia(e) {
         dataType: "json",
         success: OnSuccess
     });
-
     function OnSuccess(response) {
         $('.ContenedorRubros').html('');
         var html = '';

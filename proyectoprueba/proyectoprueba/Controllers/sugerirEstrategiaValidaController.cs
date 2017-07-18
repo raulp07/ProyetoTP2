@@ -42,6 +42,17 @@ namespace proyectoprueba.Controllers
         }
 
         [HttpPost]
+        public JsonResult UPDEstrategia(Estrategia BEEstrategia, List<DatoEstadisticoEstrategia> BEDatoEstadisticoEstrategia)
+        {
+            if (UpdateEstrategia(BEEstrategia))
+            {
+                
+            }
+
+            return Json(UpdateEstrategia(BEEstrategia), JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
         public JsonResult ListarRubroEstrategia(RubroEstrategia BERubroEstrategia)
         {
             return Json(GetAllRubroEstrategia(BERubroEstrategia), JsonRequestBehavior.AllowGet);
@@ -68,6 +79,12 @@ namespace proyectoprueba.Controllers
         {
             return Json(GetAllDatoEstadisticoEstrategiaObjetivo(BEEstrategia), JsonRequestBehavior.AllowGet);
         }
+        [HttpPost]
+        public JsonResult ListarDatoEstadisticoEstrategia(DatoEstadisticoEstrategia BEDatoEstadisticoEstrategia)
+        {
+            return Json(GetAllDatoEstadisticoEstrategia(BEDatoEstadisticoEstrategia), JsonRequestBehavior.AllowGet);
+        }
+        
 
         #region "DAO Estrategia"
 
@@ -79,6 +96,7 @@ namespace proyectoprueba.Controllers
             {
                 SqlCommand cmd = new SqlCommand("spGetEstrategiaAll", cn);
                 cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@Id_Estrategia", SqlDbType.Int).Value = BEEstrategia.Id_Estrategia;
                 cmd.Parameters.Add("@Id_Objetivo", SqlDbType.Int).Value = BEEstrategia.Id_Objetivo;
                 List<Estrategia> list = new List<Estrategia>();
                 if (cn.State == ConnectionState.Connecting || cn.State == ConnectionState.Open)
@@ -159,23 +177,36 @@ namespace proyectoprueba.Controllers
 
         public bool UpdateEstrategia(Estrategia BEEstrategia)
         {
-
-            SqlCommand cmd;
-            using (cmd = new SqlCommand("spUpdateEstrategia", cn))
+            try
             {
-                cmd.Parameters.Add("Id_Estrategia", SqlDbType.Int).Value = BEEstrategia.Id_Estrategia;
-                cmd.Parameters.Add("NombreEstrategia", SqlDbType.VarChar).Value = BEEstrategia.NombreEstrategia;
-                cmd.Parameters.Add("DescripcionEstrategia", SqlDbType.VarChar).Value = BEEstrategia.DescripcionEstrategia;
-                cmd.Parameters.Add("EstadoEstrategia", SqlDbType.Int).Value = BEEstrategia.EstadoEstrategia;
-                cmd.Parameters.Add("Fechacumplimiento", SqlDbType.DateTime).Value = BEEstrategia.Fechacumplimiento;
-                cmd.Parameters.Add("UsuarioRegistra", SqlDbType.VarChar).Value = BEEstrategia.UsuarioRegistra;
-                cmd.Parameters.Add("MaquinaRegistra", SqlDbType.VarChar).Value = BEEstrategia.MaquinaRegistra;
-                cmd.Parameters.Add("FechaRegistro", SqlDbType.DateTime).Value = BEEstrategia.FechaRegistro;
-                cmd.Parameters.Add("UsuarioModifica", SqlDbType.VarChar).Value = BEEstrategia.UsuarioModifica;
-                cmd.Parameters.Add("MaquinaModifica", SqlDbType.VarChar).Value = BEEstrategia.MaquinaModifica;
-                cmd.Parameters.Add("FechaModifica", SqlDbType.DateTime).Value = BEEstrategia.FechaModifica;
+                cn.Open();
+                SqlCommand cmd;
+                using (cmd = new SqlCommand("spUpdateEstrategia", cn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("Id_Estrategia", SqlDbType.Int).Value = BEEstrategia.Id_Estrategia;
+                    cmd.Parameters.Add("NombreEstrategia", SqlDbType.VarChar).Value = BEEstrategia.NombreEstrategia;
+                    cmd.Parameters.Add("DescripcionEstrategia", SqlDbType.VarChar).Value = BEEstrategia.DescripcionEstrategia;
+                    cmd.Parameters.Add("EstadoEstrategia", SqlDbType.Int).Value = BEEstrategia.EstadoEstrategia;
+                    cmd.Parameters.Add("Fechacumplimiento", SqlDbType.DateTime).Value = BEEstrategia.Fechacumplimiento;
+                    cmd.Parameters.Add("UsuarioRegistra", SqlDbType.VarChar).Value = Environment.UserName;
+                    cmd.Parameters.Add("MaquinaRegistra", SqlDbType.VarChar).Value = Environment.UserDomainName; ;
+                    cmd.Parameters.Add("FechaRegistro", SqlDbType.DateTime).Value = DateTime.Today;
+                    cmd.Parameters.Add("UsuarioModifica", SqlDbType.VarChar).Value = Environment.UserName;
+                    cmd.Parameters.Add("MaquinaModifica", SqlDbType.VarChar).Value = Environment.UserDomainName; ;
+                    cmd.Parameters.Add("FechaModifica", SqlDbType.DateTime).Value = BEEstrategia.FechaModifica;
+                }
+                return (cmd.ExecuteNonQuery() == 1);
             }
-            return (cmd.ExecuteNonQuery() == 1);
+            catch (Exception)
+            {
+
+                throw;
+            }
+            finally {
+                cn.Close();
+            }
+            
         }
 
 
@@ -307,16 +338,14 @@ namespace proyectoprueba.Controllers
             SqlCommand cmd = new SqlCommand("spGetDatoEstadisticoEstrategiaAll", cn);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.Add("@Id_DatoEstadisticoEstrategia", SqlDbType.Int).Value = BEDatoEstadisticoEstrategia.Id_DatoEstadisticoEstrategia;
+            cmd.Parameters.Add("@Id_Estrategia", SqlDbType.Int).Value = BEDatoEstadisticoEstrategia.Id_Estrategia;
             List<DatoEstadisticoEstrategia> list = new List<DatoEstadisticoEstrategia>();
             cn.Open();
             using (IDataReader dataReader = cmd.ExecuteReader())
             {
-
                 while (dataReader.Read())
                 {
-
                     DatoEstadisticoEstrategia obj = new DatoEstadisticoEstrategia();
-
                     if (dataReader["Id_DatoEstadisticoEstrategia"] != DBNull.Value) { obj.Id_DatoEstadisticoEstrategia = (int)dataReader["Id_DatoEstadisticoEstrategia"]; }
                     if (dataReader["idRubroAccion"] != DBNull.Value) { obj.idRubroAccion = (int)dataReader["idRubroAccion"]; }
                     if (dataReader["Id_Estrategia"] != DBNull.Value) { obj.Id_Estrategia = (int)dataReader["Id_Estrategia"]; }
@@ -330,15 +359,11 @@ namespace proyectoprueba.Controllers
                     if (dataReader["UsuarioModifica"] != DBNull.Value) { obj.UsuarioModifica = (string)dataReader["UsuarioModifica"]; }
                     if (dataReader["MaquinaModifica"] != DBNull.Value) { obj.MaquinaModifica = (string)dataReader["MaquinaModifica"]; }
                     if (dataReader["FechaModifica"] != DBNull.Value) { obj.FechaModifica = (DateTime)dataReader["FechaModifica"]; }
-
                     list.Add(obj);
-
                 }
-
             }
             cn.Close();
             return list;
-
         }
 
         public bool InsertDatoEstadisticoEstrategia(DatoEstadisticoEstrategia BEDatoEstadisticoEstrategia)
@@ -386,10 +411,10 @@ namespace proyectoprueba.Controllers
         public bool UpdateDatoEstadisticoEstrategia(DatoEstadisticoEstrategia BEDatoEstadisticoEstrategia)
         {
 
-
-            SqlCommand cmd;
+            
             try
             {
+                SqlCommand cmd;
                 cn.Open();
                 using (cmd = new SqlCommand("spUpdateDatoEstadisticoEstrategia", cn))
                 {

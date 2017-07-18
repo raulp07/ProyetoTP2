@@ -499,6 +499,7 @@ end
 go
 CREATE PROCEDURE [spGetEstrategiaAll]
 (
+@Id_Estrategia int =0,
 @Id_Objetivo int =0
 )
 AS
@@ -507,7 +508,8 @@ SELECT *
 FROM
 Estrategia
 where 
-(@Id_Objetivo= 0 or Id_Objetivo = @Id_Objetivo)
+(@Id_Estrategia =0 or Id_Estrategia=@Id_Estrategia)
+AND (@Id_Objetivo= 0 or Id_Objetivo = @Id_Objetivo)
 END
 
 GO
@@ -647,11 +649,18 @@ begin
 end
 go
 CREATE PROCEDURE [spGetDatoEstadisticoEstrategiaAll]
+(
+@Id_DatoEstadisticoEstrategia int =0,
+@Id_Estrategia int =0
+)
 AS
 BEGIN
 SELECT *
 FROM
 DatoEstadisticoEstrategia
+where 
+(@Id_DatoEstadisticoEstrategia = 0 or Id_DatoEstadisticoEstrategia = @Id_DatoEstadisticoEstrategia)
+AND (@Id_Estrategia = 0 or Id_Estrategia = @Id_Estrategia)
 END
 
 
