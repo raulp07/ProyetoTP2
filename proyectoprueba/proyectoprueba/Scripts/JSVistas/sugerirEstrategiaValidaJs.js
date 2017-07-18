@@ -46,6 +46,16 @@ $("#btnGuardar").on("click", function (e) {
     e.preventDefault();
 
 
+    if ($('#txtnombre').val()== "") {
+        alert('Ingrese un nombre para la estrategia');
+        return;
+    }
+
+    if ($('#txtdescripcion').val() == "") {
+        alert('Ingrese una descripción para la estrategia');
+        return;
+    }
+
     var idEstrategia = $('#hdIDEstrategia').val();
 
 
