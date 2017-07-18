@@ -173,7 +173,7 @@ $('#btnSugerir').on('click', function (e) {
                     ArrayCabezera += '"' + value2.NombreEstadisticoEstrategia + '",';
                 }
             });
-            
+
             ArrayCabezera = ArrayCabezera.substring(0, ArrayCabezera.length - 1);
             ArrayCabezera += '],';
             //Cuerpo
@@ -182,7 +182,7 @@ $('#btnSugerir').on('click', function (e) {
                 data += '["' + value1.NombreRubroEstrategia + '",';
                 $.each(response2, function (key, value2) {
                     if (value1.idRubroAccion == value2.idRubroAccion) {
-                        data +=  value2.Puntuacion +',';
+                        data += value2.Puntuacion + ',';
                     }
                 });
                 data = data.substring(0, data.length - 1);
@@ -190,9 +190,9 @@ $('#btnSugerir').on('click', function (e) {
             });
             data = data.substring(0, data.length - 1);
 
-            
 
-            data = '['+ArrayCabezera + data + ']';
+
+            data = '[' + ArrayCabezera + data + ']';
             google.charts.setOnLoadCallback(drawChart(data));
         }
 
@@ -244,15 +244,17 @@ function ListarEstrategia() {
         $('#tbGeneral tbody').html('');
         var html = '';
         $.each(response, function (key, value) {
+
+
             html += '<tr>' +
             '<td><input type="checkbox" checked /></td>' +
             '<td>' + value.NombreEstrategia + '</td>' +
             '<td>' + value.EstadoEstrategia + '</td>' +
-            '<td>' + value.Fechacumplimiento + '</td>' +
+            '<td>' + Date(value.Fechacumplimiento); + '</td>' +
             '</tr>';
         });
         $('#tbGeneral tbody').html(html);
-        
+
     }
 }
 function listarPlanMKT() {
@@ -304,7 +306,7 @@ function ListarRubroEstrategia(e) {
     }
 }
 
-$('#tbGeneral').DataTable();
+//$('#tbGeneral').DataTable();
 
 listarPlanMKT();
 
