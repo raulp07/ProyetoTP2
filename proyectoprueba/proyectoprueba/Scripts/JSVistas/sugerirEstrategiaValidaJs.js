@@ -262,20 +262,25 @@ $('#btnSugerir').on('click', function (e) {
 
             var fffff = JSON.parse(data);
 
+            debugger;
             var asda = '';
             var textomostrar = '';
+            var qwe = '';
             $.each(fffff, function (key, value) {
+                   
                 if (key >0) {
                     textomostrar +="En rubro => "+ value[0];
                     textomostrar += " el valor esperado  es " + value[1];
+                    debugger;
                     for (var i = 2; i < value.length; i++) {
                         if (value[1] > value[i]) {
-                            textomostrar += "  y Falta " + (value[1] - value[i]) ;
+                            textomostrar += " , falta en la columna "+ i + " del grafico " + (value[1] - value[i])+" puntos del valor esperado";
                         } else {
-                            textomostrar += " y sobra " + (value[i] - value[1]) ;
+                            textomostrar += " , excede en la columna " + i + " del grafico " + (value[i] - value[1]) + " puntos del valor esperado";
                         }
                     }
                     textomostrar += '</br>';
+                    debugger;
                 }
             });
             debugger;
