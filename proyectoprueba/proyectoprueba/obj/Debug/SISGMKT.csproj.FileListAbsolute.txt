@@ -82,4 +82,3 @@ D:\UPC\desarrollo\GIT_TP2\proyectoprueba\proyectoprueba\bin\zh-Hans\System.Spati
 D:\UPC\desarrollo\GIT_TP2\proyectoprueba\proyectoprueba\bin\zh-Hant\System.Spatial.resources.dll
 D:\UPC\desarrollo\GIT_TP2\proyectoprueba\proyectoprueba\obj\Debug\proyectoprueba.dll
 D:\UPC\desarrollo\GIT_TP2\proyectoprueba\proyectoprueba\obj\Debug\proyectoprueba.pdb
-D:\UPC\desarrollo\GIT_TP2\proyectoprueba\proyectoprueba\obj\Debug\SISGMKT.csprojResolveAssemblyReference.cache

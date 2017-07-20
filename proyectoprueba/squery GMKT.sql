@@ -58,7 +58,7 @@ end
 go
 create table RubroEstrategia
 (
-idRubroAccion int primary key identity,
+idRubroEstrategia int primary key identity,
 Id_Objetivo int,
 NombreRubroEstrategia varchar(50),
 PorcentajeImportancia int,
@@ -103,12 +103,81 @@ go
 Create table DatoEstadisticoEstrategia
 (
 Id_DatoEstadisticoEstrategia int primary key identity,
-idRubroAccion int,
+idRubroEstrategia int,
 Id_Estrategia int,
 NombreEstadisticoEstrategia varchar(50),
 Puntuacion int,
 Porcentaje int,
 Fechacumplimiento datetime,
+UsuarioRegistra varchar(100),
+MaquinaRegistra varchar(100),
+FechaRegistro	datetime,
+UsuarioModifica varchar(100),
+MaquinaModifica varchar(100),
+FechaModifica	datetime
+)
+GO
+
+
+
+IF EXISTS (SELECT * FROM sysobjects WHERE type = 'U' AND name = 'RubroAccion')
+begin
+	drop table RubroAccion
+end
+go
+create table RubroAccion
+(
+idRubroAccion int primary key identity,
+Id_Objetivo int,
+nombreRubroAccion varchar(50),
+PorcentajeImportancia int,
+costoPermitidoRubro decimal(18,2),
+UsuarioRegistra varchar(100),
+MaquinaRegistra varchar(100),
+FechaRegistro	datetime,
+UsuarioModifica varchar(100),
+MaquinaModifica varchar(100),
+FechaModifica	datetime
+)
+
+GO
+
+IF EXISTS (SELECT * FROM sysobjects WHERE type = 'U' AND name = 'Accion')
+begin
+	drop table Accion
+end
+go
+Create table Accion
+(
+Id_Accion int primary key identity,
+Id_Estrategia int,
+nombreAccion varchar(50),
+descipcionAccion varchar(max),
+EstadoAccion int,
+Fechacumplimiento datetime,
+costoAccion decimal(18,2),
+UsuarioRegistra varchar(100),
+MaquinaRegistra varchar(100),
+FechaRegistro	datetime,
+UsuarioModifica varchar(100),
+MaquinaModifica varchar(100),
+FechaModifica	datetime
+)
+GO
+
+IF EXISTS (SELECT * FROM sysobjects WHERE type = 'U' AND name = 'DatoEstadisticoAccion')
+begin
+	drop table DatoEstadisticoAccion
+end
+go
+Create table DatoEstadisticoAccion
+(
+Id_DatoEstadisticoAccion int primary key identity,
+idRubroAccion int,
+Id_Accion int,
+nombreDatoEstadisticoAccion varchar(50),
+Puntuacion int,
+Porcentaje int,
 UsuarioRegistra varchar(100),
 MaquinaRegistra varchar(100),
 FechaRegistro	datetime,
@@ -376,7 +445,7 @@ end
 go
 CREATE PROCEDURE [spGetRubroEstrategiaAll]
 (
-@idRubroAccion int =0,
+@idRubroEstrategia int =0,
 @Id_Objetivo int =0
 )
 AS
@@ -385,7 +454,7 @@ SELECT *
 FROM
 RubroEstrategia
 where 
-(@idRubroAccion = 0 or idRubroAccion = @idRubroAccion)
+(@idRubroEstrategia = 0 or idRubroEstrategia = @idRubroEstrategia)
 and (@Id_Objetivo = 0 or Id_Objetivo = @Id_Objetivo)
 END
 
@@ -442,7 +511,7 @@ begin
 end
 go
 CREATE PROCEDURE [spUpdateRubroEstrategia]
-@idRubroAccion int,
+@idRubroEstrategia int,
 @Id_Objetivo int,
 @NombreRubroEstrategia varchar(50),
 @PorcentajeImportancia int,
@@ -469,7 +538,7 @@ UsuarioModifica = @UsuarioModifica,
 MaquinaModifica = @MaquinaModifica,
 FechaModifica = @FechaModifica
 WHERE
-idRubroAccion = @idRubroAccion
+idRubroEstrategia = @idRubroEstrategia
 END
 Go
 IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'spDeleteRubroEstrategia')
@@ -478,13 +547,13 @@ begin
 end
 go
 CREATE PROCEDURE [spDeleteRubroEstrategia]
-@idRubroAccion int
+@idRubroEstrategia int
 AS
 BEGIN
 DELETE FROM
 RubroEstrategia
 WHERE
-idRubroAccion = @idRubroAccion
+idRubroEstrategia = @idRubroEstrategia
 END
 
 
@@ -560,9 +629,10 @@ VALUES (
 @MaquinaModifica,
 @FechaModifica
 )
+set @Id_Estrategia = @@IDENTITY
 END
 
-set @Id_Estrategia = @@IDENTITY
+
 
 GO
 IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'spUpdateEstrategia')
@@ -654,6 +724,7 @@ begin
 	drop Procedure spGetDatoEstadisticoEstrategiaAll
 end
 go
+
 CREATE PROCEDURE [spGetDatoEstadisticoEstrategiaAll]
 (
 @Id_DatoEstadisticoEstrategia int =0,
@@ -677,7 +748,7 @@ begin
 end
 go
 CREATE PROCEDURE [spInsertDatoEstadisticoEstrategia]
-@idRubroAccion int,
+@idRubroEstrategia int,
 @Id_Estrategia int,
 @NombreEstadisticoEstrategia varchar(50)='',
 @Puntuacion int,
@@ -693,7 +764,7 @@ AS
 BEGIN
 INSERT INTO 
 DatoEstadisticoEstrategia(
-idRubroAccion,
+idRubroEstrategia,
 Id_Estrategia,
 NombreEstadisticoEstrategia,
 Puntuacion,
@@ -707,7 +778,7 @@ MaquinaModifica,
 FechaModifica
 )
 VALUES (
-@idRubroAccion,
+@idRubroEstrategia,
 @Id_Estrategia,
 @NombreEstadisticoEstrategia,
 @Puntuacion,
@@ -780,6 +851,375 @@ GO
 
 
 
+--- store rubro accion
+
+
+IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'spGetRubroAccionAll')
+begin
+	drop Procedure spGetRubroAccionAll
+end
+Go
+CREATE PROCEDURE [spGetRubroAccionAll]
+(
+@idRubroAccion int =0,
+@Id_Objetivo int =0
+)
+AS
+BEGIN
+SELECT *
+FROM
+RubroAccion
+where 
+(@idRubroAccion = 0 or idRubroAccion = @idRubroAccion)
+and (@Id_Objetivo = 0 or Id_Objetivo = @Id_Objetivo)
+END
+
+
+
+
+GO
+
+IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'spInsertRubroAccion')
+begin
+	drop Procedure spInsertRubroAccion
+end
+Go
+CREATE PROCEDURE [spInsertRubroAccion]
+@idRubroAccion int,
+@Id_Objetivo int,
+@nombreRubroAccion varchar(50),
+@PorcentajeImportancia int,
+@costoPermitidoRubro decimal(18,2),
+@UsuarioRegistra varchar(100),
+@MaquinaRegistra varchar(100),
+@FechaRegistro datetime,
+@UsuarioModifica varchar(100),
+@MaquinaModifica varchar(100),
+@FechaModifica datetime
+AS
+BEGIN
+INSERT INTO 
+RubroAccion(
+Id_Objetivo,
+nombreRubroAccion,
+PorcentajeImportancia,
+costoPermitidoRubro,
+UsuarioRegistra,
+MaquinaRegistra,
+FechaRegistro,
+UsuarioModifica,
+MaquinaModifica,
+FechaModifica
+)
+VALUES (
+@Id_Objetivo,
+@nombreRubroAccion,
+@PorcentajeImportancia,
+@costoPermitidoRubro,
+@UsuarioRegistra,
+@MaquinaRegistra,
+@FechaRegistro,
+@UsuarioModifica,
+@MaquinaModifica,
+@FechaModifica
+)
+END
+GO
+
+IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'spUpdateRubroAccion')
+begin
+	drop Procedure spUpdateRubroAccion
+end
+Go
+CREATE PROCEDURE [spUpdateRubroAccion]
+@idRubroAccion int,
+@Id_Objetivo int,
+@nombreRubroAccion varchar(50),
+@PorcentajeImportancia int,
+@costoPermitidoRubro decimal(18,2),
+@UsuarioRegistra varchar(100),
+@MaquinaRegistra varchar(100),
+@FechaRegistro datetime,
+@UsuarioModifica varchar(100),
+@MaquinaModifica varchar(100),
+@FechaModifica datetime
+AS
+BEGIN
+UPDATE
+RubroAccion
+SET
+Id_Objetivo = @Id_Objetivo,
+nombreRubroAccion = @nombreRubroAccion,
+PorcentajeImportancia = @PorcentajeImportancia,
+costoPermitidoRubro = @costoPermitidoRubro,
+UsuarioRegistra = @UsuarioRegistra,
+MaquinaRegistra = @MaquinaRegistra,
+FechaRegistro = @FechaRegistro,
+UsuarioModifica = @UsuarioModifica,
+MaquinaModifica = @MaquinaModifica,
+FechaModifica = @FechaModifica
+WHERE
+idRubroAccion = @idRubroAccion
+END
+
+----- store Accion
+
+Go
+
+IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'spGetAccionAll')
+begin
+	drop Procedure spGetAccionAll
+end
+Go
+CREATE PROCEDURE [spGetAccionAll]
+(
+@Id_Accion int= 0,
+@Id_Estrategia int =0
+)
+AS
+BEGIN
+SELECT *
+FROM
+Accion
+where
+(@Id_Accion = 0 or Id_Accion = @Id_Accion)
+and (@Id_Estrategia = 0 or Id_Estrategia = @Id_Estrategia)
+END
+
+GO
+IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'spInsertAccion')
+begin
+	drop Procedure spInsertAccion
+end
+Go
+CREATE PROCEDURE [spInsertAccion]
+@Id_Accion int out,
+@Id_Estrategia int,
+@nombreAccion varchar(50),
+@descipcionAccion varchar(max),
+@EstadoAccion int,
+@Fechacumplimiento datetime,
+@costoAccion decimal(18,2),
+@UsuarioRegistra varchar(100),
+@MaquinaRegistra varchar(100),
+@FechaRegistro datetime,
+@UsuarioModifica varchar(100),
+@MaquinaModifica varchar(100),
+@FechaModifica datetime
+AS
+BEGIN
+INSERT INTO 
+Accion(
+Id_Estrategia,
+nombreAccion,
+descipcionAccion,
+EstadoAccion,
+Fechacumplimiento,
+costoAccion,
+UsuarioRegistra,
+MaquinaRegistra,
+FechaRegistro,
+UsuarioModifica,
+MaquinaModifica,
+FechaModifica
+)
+VALUES (
+@Id_Estrategia,
+@nombreAccion,
+@descipcionAccion,
+@EstadoAccion,
+@Fechacumplimiento,
+@costoAccion,
+@UsuarioRegistra,
+@MaquinaRegistra,
+@FechaRegistro,
+@UsuarioModifica,
+@MaquinaModifica,
+@FechaModifica
+)
+set @Id_Estrategia = @@IDENTITY
+END
+
+
+GO
+IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'spUpdateAccion')
+begin
+	drop Procedure spUpdateAccion
+end
+Go
+CREATE PROCEDURE [spUpdateAccion]
+@Id_Accion int,
+@Id_Estrategia int,
+@nombreAccion varchar(50),
+@descipcionAccion varchar(max),
+@EstadoAccion int,
+@Fechacumplimiento datetime,
+@costoAccion decimal(18,2),
+@UsuarioRegistra varchar(100),
+@MaquinaRegistra varchar(100),
+@FechaRegistro datetime,
+@UsuarioModifica varchar(100),
+@MaquinaModifica varchar(100),
+@FechaModifica datetime
+AS
+BEGIN
+UPDATE
+Accion
+SET
+Id_Estrategia = @Id_Estrategia,
+nombreAccion = @nombreAccion,
+descipcionAccion = @descipcionAccion,
+EstadoAccion = @EstadoAccion,
+Fechacumplimiento = @Fechacumplimiento,
+costoAccion = @costoAccion,
+UsuarioRegistra = @UsuarioRegistra,
+MaquinaRegistra = @MaquinaRegistra,
+FechaRegistro = @FechaRegistro,
+UsuarioModifica = @UsuarioModifica,
+MaquinaModifica = @MaquinaModifica,
+FechaModifica = @FechaModifica
+WHERE
+Id_Accion = @Id_Accion
+END
+
+--- store dato rubro accion
+
+
+
+Go
+IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'spGetDatoEstadisticoAccionObjetivos')
+begin
+	drop Procedure spGetDatoEstadisticoAccionObjetivos
+end
+go
+CREATE PROCEDURE [spGetDatoEstadisticoAccionObjetivos]
+(
+@Id_Estrategia int 
+)
+AS
+BEGIN
+SELECT DEA.*,A.nombreAccion
+FROM
+DatoEstadisticoAccion DEA
+inner join Accion A on DEA.Id_Accion = A.Id_Accion
+where A.Id_Estrategia = @Id_Estrategia
+END
+
+
+Go
+IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'spGetDatoEstadisticoAccionAll')
+begin
+	drop Procedure spGetDatoEstadisticoAccionAll
+end
+go
+
+CREATE PROCEDURE [spGetDatoEstadisticoAccionAll]
+(
+@Id_DatoEstadisticoAccion int =0,
+@Id_Accion int =0
+)
+AS
+BEGIN
+SELECT *
+FROM
+DatoEstadisticoAccion
+where 
+(@Id_DatoEstadisticoAccion = 0 or Id_DatoEstadisticoAccion = @Id_DatoEstadisticoAccion)
+AND (@Id_Accion = 0 or Id_Accion = @Id_Accion)
+END
+
+
+GO
+IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'spInsertDatoEstadisticoAccion')
+begin
+	drop Procedure spInsertDatoEstadisticoAccion
+end
+Go
+CREATE PROCEDURE [spInsertDatoEstadisticoAccion]
+@Id_DatoEstadisticoAccion int,
+@idRubroAccion int,
+@Id_Accion int,
+@nombreDatoEstadisticoAccion varchar(50),
+@Puntuacion int,
+@Porcentaje int,
+@UsuarioRegistra varchar(100),
+@MaquinaRegistra varchar(100),
+@FechaRegistro datetime,
+@UsuarioModifica varchar(100),
+@MaquinaModifica varchar(100),
+@FechaModifica datetime
+AS
+BEGIN
+INSERT INTO 
+DatoEstadisticoAccion(
+idRubroAccion,
+Id_Accion,
+nombreDatoEstadisticoAccion,
+Puntuacion,
+Porcentaje,
+UsuarioRegistra,
+MaquinaRegistra,
+FechaRegistro,
+UsuarioModifica,
+MaquinaModifica,
+FechaModifica
+)
+VALUES (
+@idRubroAccion,
+@Id_Accion,
+@nombreDatoEstadisticoAccion,
+@Puntuacion,
+@Porcentaje,
+@UsuarioRegistra,
+@MaquinaRegistra,
+@FechaRegistro,
+@UsuarioModifica,
+@MaquinaModifica,
+@FechaModifica
+)
+END
+
+GO
+IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'spUpdateDatoEstadisticoAccion')
+begin
+	drop Procedure spUpdateDatoEstadisticoAccion
+end
+Go
+CREATE PROCEDURE [spUpdateDatoEstadisticoAccion]
+@Id_DatoEstadisticoAccion int,
+@idRubroAccion int,
+@Id_Accion int,
+@nombreDatoEstadisticoAccion varchar(50),
+@Puntuacion int,
+@Porcentaje int,
+@UsuarioRegistra varchar(100),
+@MaquinaRegistra varchar(100),
+@FechaRegistro datetime,
+@UsuarioModifica varchar(100),
+@MaquinaModifica varchar(100),
+@FechaModifica datetime
+AS
+BEGIN
+UPDATE
+DatoEstadisticoAccion
+SET
+idRubroAccion = @idRubroAccion,
+Id_Accion = @Id_Accion,
+nombreDatoEstadisticoAccion = @nombreDatoEstadisticoAccion,
+Puntuacion = @Puntuacion,
+Porcentaje = @Porcentaje,
+UsuarioRegistra = @UsuarioRegistra,
+MaquinaRegistra = @MaquinaRegistra,
+FechaRegistro = @FechaRegistro,
+UsuarioModifica = @UsuarioModifica,
+MaquinaModifica = @MaquinaModifica,
+FechaModifica = @FechaModifica
+WHERE
+Id_DatoEstadisticoAccion = @Id_DatoEstadisticoAccion
+END
+
+
+
 
 
 insert into PlanMarketing (nombrePanMarketing,descrípcion) values ('Plan Marketing 1','Plan Marketing 1')
@@ -834,4 +1274,23 @@ insert into RubroEstrategia (Id_Objetivo,NombreRubroEstrategia,PorcentajeImporta
 insert into RubroEstrategia (Id_Objetivo,NombreRubroEstrategia,PorcentajeImportancia,CostoPermitidoRubro) values (4,'rubro 2 objetivo 4',3,5)
 insert into RubroEstrategia (Id_Objetivo,NombreRubroEstrategia,PorcentajeImportancia,CostoPermitidoRubro) values (4,'rubro 3 objetivo 4',3,5)
 insert into RubroEstrategia (Id_Objetivo,NombreRubroEstrategia,PorcentajeImportancia,CostoPermitidoRubro) values (4,'rubro 4 objetivo 4',3,5)
+
+
+
+insert into RubroAccion(Id_Objetivo,nombreRubroAccion,PorcentajeImportancia,CostoPermitidoRubro) values (1,'rubro 1 objetivo 1',3,5)
+insert into RubroAccion (Id_Objetivo,nombreRubroAccion,PorcentajeImportancia,CostoPermitidoRubro) values (1,'rubro 2 objetivo 1',3,5)
+insert into RubroAccion (Id_Objetivo,nombreRubroAccion,PorcentajeImportancia,CostoPermitidoRubro) values (1,'rubro 4 objetivo 1',3,5)
+
+insert into RubroAccion (Id_Objetivo,nombreRubroAccion,PorcentajeImportancia,CostoPermitidoRubro) values (2,'rubro 1 objetivo 2',3,5)
+insert into RubroAccion (Id_Objetivo,nombreRubroAccion,PorcentajeImportancia,CostoPermitidoRubro) values (2,'rubro 2 objetivo 2',3,5)
+insert into RubroAccion (Id_Objetivo,nombreRubroAccion,PorcentajeImportancia,CostoPermitidoRubro) values (2,'rubro 3 objetivo 2',3,5)
+
+insert into RubroAccion (Id_Objetivo,nombreRubroAccion,PorcentajeImportancia,CostoPermitidoRubro) values (3,'rubro 1 objetivo 3',3,5)
+insert into RubroAccion (Id_Objetivo,nombreRubroAccion,PorcentajeImportancia,CostoPermitidoRubro) values (3,'rubro 2 objetivo 3',3,5)
+
+insert into RubroAccion (Id_Objetivo,nombreRubroAccion,PorcentajeImportancia,CostoPermitidoRubro) values (4,'rubro 1 objetivo 4',3,5)
+insert into RubroAccion (Id_Objetivo,nombreRubroAccion,PorcentajeImportancia,CostoPermitidoRubro) values (4,'rubro 2 objetivo 4',3,5)
+insert into RubroAccion (Id_Objetivo,nombreRubroAccion,PorcentajeImportancia,CostoPermitidoRubro) values (4,'rubro 3 objetivo 4',3,5)
+insert into RubroAccion (Id_Objetivo,nombreRubroAccion,PorcentajeImportancia,CostoPermitidoRubro) values (4,'rubro 4 objetivo 4',3,5)
+
 

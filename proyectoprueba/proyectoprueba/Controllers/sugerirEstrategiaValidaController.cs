@@ -27,6 +27,27 @@ namespace proyectoprueba.Controllers
         public JsonResult ListarPlanMKT()
         {
             return Json(GetAllPlanMarketing(), JsonRequestBehavior.AllowGet);
+            //return Json(new { Error = false, ListaPlanMKT = GetAllPlanMarketing() }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult GetPersonas()
+        {
+            try
+            {
+                IEnumerable<PlanMarketing> personaLista = new List<PlanMarketing>()
+                {
+                    new PlanMarketing { Id_PlanMarketing = 1, nombrePanMarketing = "Juan", presupuesto = 3242 },
+                    new PlanMarketing { Id_PlanMarketing = 2, nombrePanMarketing = "Ana", presupuesto = 3242 },
+                    new PlanMarketing { Id_PlanMarketing = 3, nombrePanMarketing = "Rolando", presupuesto = 3242 },
+                    new PlanMarketing { Id_PlanMarketing = 4, nombrePanMarketing = "Maria", presupuesto = 3242 },
+                };
+                return Json(new { Error = false, personaLista = personaLista }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                return Json(new { Error = true, Mensaje = "Ocurrió un error: " + e.ToString() }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         [HttpPost]
@@ -46,11 +67,11 @@ namespace proyectoprueba.Controllers
         {
             bool Resultado = false;
             if (UpdateEstrategia(BEEstrategia))
-            {                
+            {
                 foreach (DatoEstadisticoEstrategia DatoEstadisticoEstrategia in BEDatoEstadisticoEstrategia)
                 {
                     Resultado = InsertDatoEstadisticoEstrategia(DatoEstadisticoEstrategia);
-                }                
+                }
             }
 
             return Json(Resultado, JsonRequestBehavior.AllowGet);
@@ -88,7 +109,7 @@ namespace proyectoprueba.Controllers
         {
             return Json(GetAllDatoEstadisticoEstrategia(BEDatoEstadisticoEstrategia), JsonRequestBehavior.AllowGet);
         }
-        
+
 
         #region "DAO Estrategia"
 
@@ -207,10 +228,11 @@ namespace proyectoprueba.Controllers
 
                 throw;
             }
-            finally {
+            finally
+            {
                 cn.Close();
             }
-            
+
         }
 
 
@@ -318,7 +340,7 @@ namespace proyectoprueba.Controllers
                 {
                     DatoEstadisticoEstrategia obj = new DatoEstadisticoEstrategia();
                     if (dataReader["Id_DatoEstadisticoEstrategia"] != DBNull.Value) { obj.Id_DatoEstadisticoEstrategia = (int)dataReader["Id_DatoEstadisticoEstrategia"]; }
-                    if (dataReader["idRubroAccion"] != DBNull.Value) { obj.idRubroAccion = (int)dataReader["idRubroAccion"]; }
+                    if (dataReader["idRubroEstrategia"] != DBNull.Value) { obj.idRubroEstrategia = (int)dataReader["idRubroEstrategia"]; }
                     if (dataReader["Id_Estrategia"] != DBNull.Value) { obj.Id_Estrategia = (int)dataReader["Id_Estrategia"]; }
                     if (dataReader["NombreEstadisticoEstrategia"] != DBNull.Value) { obj.NombreEstadisticoEstrategia = (string)dataReader["NombreEstrategia"]; }
                     if (dataReader["Puntuacion"] != DBNull.Value) { obj.Puntuacion = (int)dataReader["Puntuacion"]; }
@@ -351,7 +373,7 @@ namespace proyectoprueba.Controllers
                 {
                     DatoEstadisticoEstrategia obj = new DatoEstadisticoEstrategia();
                     if (dataReader["Id_DatoEstadisticoEstrategia"] != DBNull.Value) { obj.Id_DatoEstadisticoEstrategia = (int)dataReader["Id_DatoEstadisticoEstrategia"]; }
-                    if (dataReader["idRubroAccion"] != DBNull.Value) { obj.idRubroAccion = (int)dataReader["idRubroAccion"]; }
+                    if (dataReader["idRubroEstrategia"] != DBNull.Value) { obj.idRubroEstrategia = (int)dataReader["idRubroEstrategia"]; }
                     if (dataReader["Id_Estrategia"] != DBNull.Value) { obj.Id_Estrategia = (int)dataReader["Id_Estrategia"]; }
                     if (dataReader["NombreEstadisticoEstrategia"] != DBNull.Value) { obj.NombreEstadisticoEstrategia = (string)dataReader["NombreEstadisticoEstrategia"]; }
                     if (dataReader["Puntuacion"] != DBNull.Value) { obj.Puntuacion = (int)dataReader["Puntuacion"]; }
@@ -382,7 +404,7 @@ namespace proyectoprueba.Controllers
                 using (cmd = new SqlCommand("spInsertDatoEstadisticoEstrategia", cn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@idRubroAccion", SqlDbType.Int).Value = BEDatoEstadisticoEstrategia.idRubroAccion;
+                    cmd.Parameters.Add("@idRubroEstrategia", SqlDbType.Int).Value = BEDatoEstadisticoEstrategia.idRubroEstrategia;
                     cmd.Parameters.Add("@Id_Estrategia", SqlDbType.Int).Value = BEDatoEstadisticoEstrategia.Id_Estrategia;
                     //cmd.Parameters.Add("@NombreEstadisticoEstrategia", SqlDbType.VarChar).Value = BEDatoEstadisticoEstrategia.NombreEstadisticoEstrategia;
                     cmd.Parameters.Add("@Puntuacion", SqlDbType.Int).Value = BEDatoEstadisticoEstrategia.Puntuacion;
@@ -415,7 +437,7 @@ namespace proyectoprueba.Controllers
         public bool UpdateDatoEstadisticoEstrategia(DatoEstadisticoEstrategia BEDatoEstadisticoEstrategia)
         {
 
-            
+
             try
             {
                 SqlCommand cmd;
@@ -424,7 +446,7 @@ namespace proyectoprueba.Controllers
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add("@Id_DatoEstadisticoEstrategia", SqlDbType.Int).Value = BEDatoEstadisticoEstrategia.Id_DatoEstadisticoEstrategia;
-                    cmd.Parameters.Add("@idRubroAccion", SqlDbType.Int).Value = BEDatoEstadisticoEstrategia.idRubroAccion;
+                    cmd.Parameters.Add("@idRubroEstrategia", SqlDbType.Int).Value = BEDatoEstadisticoEstrategia.idRubroEstrategia;
                     cmd.Parameters.Add("@Id_Estrategia", SqlDbType.Int).Value = BEDatoEstadisticoEstrategia.Id_Estrategia;
                     cmd.Parameters.Add("@NombreEstadisticoEstrategia", SqlDbType.VarChar).Value = BEDatoEstadisticoEstrategia.NombreEstadisticoEstrategia;
                     cmd.Parameters.Add("@Puntuacion", SqlDbType.Int).Value = BEDatoEstadisticoEstrategia.Puntuacion;
@@ -461,7 +483,7 @@ namespace proyectoprueba.Controllers
 
             SqlCommand cmd = new SqlCommand("spGetRubroEstrategiaAll", cn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.Add("@idRubroAccion", SqlDbType.Int).Value = BERubroEstrategia.idRubroAccion;
+            cmd.Parameters.Add("@idRubroEstrategia", SqlDbType.Int).Value = BERubroEstrategia.idRubroEstrategia;
             cmd.Parameters.Add("@Id_Objetivo", SqlDbType.Int).Value = BERubroEstrategia.Id_Objetivo;
             List<RubroEstrategia> list = new List<RubroEstrategia>();
             cn.Open();
@@ -470,7 +492,7 @@ namespace proyectoprueba.Controllers
                 while (dataReader.Read())
                 {
                     RubroEstrategia obj = new RubroEstrategia();
-                    if (dataReader["idRubroAccion"] != DBNull.Value) { obj.idRubroAccion = (int)dataReader["idRubroAccion"]; }
+                    if (dataReader["idRubroEstrategia"] != DBNull.Value) { obj.idRubroEstrategia = (int)dataReader["idRubroEstrategia"]; }
                     if (dataReader["Id_Objetivo"] != DBNull.Value) { obj.Id_Objetivo = (int)dataReader["Id_Objetivo"]; }
                     if (dataReader["NombreRubroEstrategia"] != DBNull.Value) { obj.NombreRubroEstrategia = (string)dataReader["NombreRubroEstrategia"]; }
                     if (dataReader["PorcentajeImportancia"] != DBNull.Value) { obj.PorcentajeImportancia = (int)dataReader["PorcentajeImportancia"]; }

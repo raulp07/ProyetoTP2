@@ -10,6 +10,8 @@
         @Styles.Render("~/Content/css")
         @Scripts.Render("~/bundles/modernizr")
 
+        @*<script src="https://unpkg.com/vue"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>*@
 
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
@@ -32,6 +34,8 @@
 
         <link href="~/Scripts/DataTable/media/css/dataTables.foundation.css" rel="stylesheet" />
 
+        
+
     </head>
     <body>
         <header>
@@ -50,7 +54,7 @@
                         <li>@Html.ActionLink("Plan Marketing", "Index", "Home")</li>
                         <li>@Html.ActionLink("Rubros", "Index", "Home")</li>
                         <li>@Html.ActionLink("Sugerencia Estrategia", "Index", "sugerirEstrategiaValida")</li>
-                        <li>@Html.ActionLink("Sugerencia Acción", "Index", "Home")</li>
+                        <li>@Html.ActionLink("Sugerencia Acción", "Index", "sugerirAccionValida")</li>
                     </ul>
                 </nav>
             </div>
