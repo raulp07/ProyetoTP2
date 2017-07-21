@@ -24,9 +24,16 @@ namespace proyectoprueba.Controllers
 
 
         [HttpPost]
-        public JsonResult ListarPlanMKT()
+        public JsonResult ListarPlanMKT(PlanMarketing BEPlanMarketing)
         {
-            return Json(GetAllPlanMarketing(), JsonRequestBehavior.AllowGet);
+            return Json(GetAllPlanMarketing(BEPlanMarketing), JsonRequestBehavior.AllowGet);
+            //return Json(new { Error = false, ListaPlanMKT = GetAllPlanMarketing() }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult ListarPlanMKTPresupuesto(PlanMarketing BEPlanMarketing)
+        {
+            return Json(GetAllPlanMarketingPresupuesto(BEPlanMarketing), JsonRequestBehavior.AllowGet);
             //return Json(new { Error = false, ListaPlanMKT = GetAllPlanMarketing() }, JsonRequestBehavior.AllowGet);
         }
 
@@ -239,12 +246,52 @@ namespace proyectoprueba.Controllers
         #endregion
 
         #region "DAO Plan de Marketing"
-        public List<PlanMarketing> GetAllPlanMarketing()
+
+        public List<PlanMarketing> GetAllPlanMarketingPresupuesto(PlanMarketing BEPlanMarketing)
+        {
+            try
+            {
+                SqlCommand cmd = new SqlCommand("spGetPlanMarketingPresupuesto", cn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@Id_PlanMarketing", SqlDbType.Int).Value = BEPlanMarketing.Id_PlanMarketing;
+
+                List<PlanMarketing> list = new List<PlanMarketing>();
+                if (cn.State == ConnectionState.Connecting || cn.State == ConnectionState.Open)
+                    cn.Close();
+
+                cn.Open();
+                using (IDataReader dataReader = cmd.ExecuteReader())
+                {
+                    while (dataReader.Read())
+                    {
+                        PlanMarketing obj = new PlanMarketing();
+                        if (dataReader["presupuesto"] != DBNull.Value) { obj.presupuesto = (decimal)dataReader["presupuesto"]; }
+                        if (dataReader["costoAccionGeneral"] != DBNull.Value) { obj.costoAccionGeneral = (decimal)dataReader["costoAccionGeneral"]; }
+                        list.Add(obj);
+                    }
+                }
+                return list;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            finally
+            {
+                cn.Close();
+            }
+
+        }
+
+        public List<PlanMarketing> GetAllPlanMarketing(PlanMarketing BEPlanMarketing)
         {
             try
             {
                 SqlCommand cmd = new SqlCommand("spGetPlanMarketingAll", cn);
                 cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@Id_PlanMarketing", SqlDbType.Int).Value = BEPlanMarketing.Id_PlanMarketing;
+
                 List<PlanMarketing> list = new List<PlanMarketing>();
                 if (cn.State == ConnectionState.Connecting || cn.State == ConnectionState.Open)
                     cn.Close();

@@ -172,6 +172,18 @@ namespace proyectoprueba.Models
 
         ///
 
+        /// Gets or Sets Costo Accion general
+        ///
+
+        public decimal costoAccionGeneral
+        {
+            get { return _costoAccionGeneral; }
+            set { _costoAccionGeneral = value; }
+        }
+        private decimal _costoAccionGeneral;
+
+        ///
+
         /// Gets or Sets UsuarioRegistra
         ///
 

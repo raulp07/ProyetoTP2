@@ -46,7 +46,7 @@ $("#btnGuardar").on("click", function (e) {
     e.preventDefault();
 
 
-    if ($('#txtnombre').val()== "") {
+    if ($('#txtnombre').val() == "") {
         alert('Ingrese un nombre para la estrategia');
         return;
     }
@@ -57,6 +57,11 @@ $("#btnGuardar").on("click", function (e) {
     }
     if ($('#txtcosto').val() == "") {
         alert('Ingrese un costo para la Acción');
+        return;
+    }
+    var diferencial = parseFloat($('#hdPresupuesto').val()) - (parseFloat($('#hdCostosAccion').val()) + parseFloat($('#txtcosto').val()));
+    if (diferencial < 0) {
+        alert('El costo de la Acción sobrepasa un ' + (diferencial * -1) + ' al presupuestado del Plan de Marketing');
         return;
     }
 
@@ -197,20 +202,21 @@ $('#SELPMKT').change(function (e) {
             //$('#SELOBJ').append('<option value=' + value.Id_Objetivo + '>' + value.NombreObjetivo + '</option>');
         });
         $('#SELOBJ').html(html);
-        
+
         $('#SELESTR').html('');
         var html = '<option value="0">--Seleccione--</option>';
         $('#SELESTR').html(html);
 
         if ($('#SELESTR').val() != "0") {
             $('#btnSugerir').removeAttr('disabled');
-            $('#btnNuevo').removeAttr('disabled');            
+            $('#btnNuevo').removeAttr('disabled');
         } else {
             $('#btnSugerir').attr('disabled', true);
             $('#btnNuevo').attr('disabled', true);
             $('#tbGeneral tbody').html('');
         }
-        
+
+        CalcularPresupuesto();
     }
 
 });
@@ -218,7 +224,7 @@ $('#SELPMKT').change(function (e) {
 
 $('#SELOBJ').change(function (e) {
     e.preventDefault();
-    
+
     var BEEstrategia = {
         Id_Objetivo: $("#SELPMKT").val()
     }
@@ -290,7 +296,7 @@ $('#btnNuevo').on('click', function (e) {
     $('#txtcosto').val('');
 
     var _date = new Date();
-    var displayDate = (_date.getMonth() + 1) + "/" + (_date.getDate()+1) + "/" + _date.getFullYear();
+    var displayDate = (_date.getMonth() + 1) + "/" + (_date.getDate() + 1) + "/" + _date.getFullYear();
     $('#dpt').val(displayDate);
 
     ListarRubroAccion();
@@ -396,7 +402,7 @@ $('#btnSugerir').on('click', function (e) {
 });
 
 
-function soloNumeros(e) {
+function soloNumeros_Longitud(e) {
     var key = window.Event ? e.which : e.keyCode
     if (key >= 48 && key <= 57) {
         var _ID = $('#' + e.currentTarget.id).val() + e.key;
@@ -406,6 +412,16 @@ function soloNumeros(e) {
             $('#' + e.currentTarget.id).val('');
             return true;
         }
+    } else {
+        return false;
+    }
+
+}
+
+function soloNumeros(e) {
+    var key = window.Event ? e.which : e.keyCode
+    if (key >= 48 && key <= 57) {
+        return true
     } else {
         return false;
     }
@@ -433,7 +449,7 @@ function ListarAccion() {
         var html = '';
         $.each(response, function (key, value) {
             var date = new Date(parseInt(value.Fechacumplimiento.substr(6)));
-            var displayDate = (date.getMonth()+1) + "/" + date.getDate() + "/" + date.getFullYear();
+            var displayDate = (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear();
 
             html += '<tr>' +
             //'<td><input type="checkbox" checked /></td>' +
@@ -444,7 +460,7 @@ function ListarAccion() {
             '</tr>';
         });
         $('#tbGeneral tbody').html(html);
-        
+
         $('.btnEditar').on('click', function () {
 
             var Id_Accion = $(this).attr('data-Est');
@@ -546,10 +562,41 @@ function ListarRubroAccion() {
             '<label>' + value.nombreRubroAccion + '</label>' +
             '</div>' +
             '<div class="cell small-2 RubroAccion_">' +
-                '<input id="' + value.idRubroAccion + '" class="numeral" type="text" onkeypress="return soloNumeros(event)" maxlength="2" />' +
+                '<input id="' + value.idRubroAccion + '" class="numeral" type="text" onkeypress="return soloNumeros_Longitud(event)" maxlength="2" />' +
             '</div>';
         });
         $('.ContenedorRubros').html(html);
+
+        if ($("#SELESTR").val() != 0) {
+            CalcularPresupuesto();
+        }
+
+    }
+}
+
+function CalcularPresupuesto() {
+    var BEPlanMarketing = {
+        Id_PlanMarketing: $("#SELPMKT").val()
+    }
+    var jsonData = JSON.stringify({ BEPlanMarketing: BEPlanMarketing });
+    $.ajax({
+        type: "POST",
+        url: "http://localhost:7382/sugerirEstrategiaValida/ListarPlanMKTPresupuesto",
+        data: jsonData,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: OnSuccess
+    });
+    function OnSuccess(response) {
+        var presupuesto = response[0].presupuesto;
+        var costoAccionGeneral = response[0].costoAccionGeneral;
+
+        $('#hdPresupuesto').val(presupuesto);
+        $('#hdCostosAccion').val(costoAccionGeneral);
+        var mensaje = '';
+        mensaje = 'El Plan de Marketing cuenta con un presupuesto de ' + presupuesto + ', hasta el momento se tiene acumulado en todas las acciones un total de ' + costoAccionGeneral;
+        $('#lblMensaje').html(mensaje);
+
 
     }
 }
@@ -601,6 +648,6 @@ listarPlanMKT();
 //        //this.traerJquery();
 //    },
 //    mounted: function () {
-        
+
 //    }
 //});

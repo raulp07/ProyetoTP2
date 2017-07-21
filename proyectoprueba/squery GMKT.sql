@@ -190,6 +190,30 @@ GO
 
 ---- Store PlanMarketing ----------
 
+
+Go
+IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'spGetPlanMarketingPresupuesto')
+begin
+	drop Procedure spGetPlanMarketingPresupuesto
+end
+go
+CREATE PROCEDURE [spGetPlanMarketingPresupuesto]
+(
+@Id_PlanMarketing int =0
+)
+AS
+BEGIN
+SELECT PM.presupuesto, sum(A.costoAccion) as 'costoAccionGeneral' FROM PlanMarketing PM 
+inner join Objetivos O on PM.Id_PlanMarketing = O.Id_PlanMarketing
+inner join Estrategia E on E.Id_Objetivo = O.Id_Objetivo
+inner join Accion A on A.Id_Estrategia = E.Id_Estrategia
+where (PM.Id_PlanMarketing = @Id_PlanMarketing)
+group by PM.presupuesto
+
+END
+
+
+
 Go
 IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'spGetPlanMarketingAll')
 begin
@@ -197,11 +221,15 @@ begin
 end
 go
 CREATE PROCEDURE [spGetPlanMarketingAll]
+(
+@Id_PlanMarketing int =0
+)
 AS
 BEGIN
 SELECT *
 FROM
 PlanMarketing
+where (@Id_PlanMarketing = 0 or Id_PlanMarketing = @Id_PlanMarketing)
 END
 
 GO
@@ -885,7 +913,6 @@ begin
 end
 Go
 CREATE PROCEDURE [spInsertRubroAccion]
-@idRubroAccion int,
 @Id_Objetivo int,
 @nombreRubroAccion varchar(50),
 @PorcentajeImportancia int,
@@ -1037,7 +1064,7 @@ VALUES (
 @MaquinaModifica,
 @FechaModifica
 )
-set @Id_Estrategia = @@IDENTITY
+set @Id_Accion = @@IDENTITY
 END
 
 
@@ -1080,6 +1107,9 @@ MaquinaModifica = @MaquinaModifica,
 FechaModifica = @FechaModifica
 WHERE
 Id_Accion = @Id_Accion
+
+delete from DatoEstadisticoAccion where Id_Accion = @Id_Accion
+
 END
 
 --- store dato rubro accion
@@ -1136,12 +1166,11 @@ begin
 end
 Go
 CREATE PROCEDURE [spInsertDatoEstadisticoAccion]
-@Id_DatoEstadisticoAccion int,
 @idRubroAccion int,
 @Id_Accion int,
-@nombreDatoEstadisticoAccion varchar(50),
+@nombreDatoEstadisticoAccion varchar(50)='',
 @Puntuacion int,
-@Porcentaje int,
+@Porcentaje int=0,
 @UsuarioRegistra varchar(100),
 @MaquinaRegistra varchar(100),
 @FechaRegistro datetime,

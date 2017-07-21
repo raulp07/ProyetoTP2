@@ -8,6 +8,8 @@
     <h2>Sugerir Acción Valida</h2>
 
     <input type="hidden" id="hdIDAccion" value="0" />
+    <input type="hidden" id="hdPresupuesto" value="0" />
+    <input type="hidden" id="hdCostosAccion" value="0" />
 
     <div class="grid-x grid-padding-x">
         <div class="large-6">
@@ -35,6 +37,9 @@
                 <a href="#" class="button" id="btnNuevo" disabled>&nbsp;&nbsp; Nueva Acción &nbsp;&nbsp;</a>
                 <a href="#" class="button" id="btnSugerir" disabled>&nbsp;&nbsp;&nbsp; Sugerir Acción &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
                 <a href="/" class="button">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cerrar &nbsp;&nbsp;&nbsp;&nbsp;</a>
+            </div>
+            <div class="large-6 large-offset-3">
+                <label id="lblMensaje" style="color:red"></label>
             </div>
         </div>
         <div class="large-12">
@@ -78,7 +83,7 @@
                 <label>Costo:</label>
             </div>
             <div class="cell small-3">
-                <input type="text" id="txtcosto" placeholder="Costo" />
+                <input type="text" id="txtcosto" placeholder="Costo" onkeypress="return soloNumeros(event)" />
             </div>
         </div>
         <div class="grid-x grid-padding-x">
