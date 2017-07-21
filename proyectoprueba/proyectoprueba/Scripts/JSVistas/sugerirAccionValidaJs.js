@@ -59,11 +59,7 @@ $("#btnGuardar").on("click", function (e) {
         alert('Ingrese un costo para la Acción');
         return;
     }
-    var diferencial = parseFloat($('#hdPresupuesto').val()) - (parseFloat($('#hdCostosAccion').val()) + parseFloat($('#txtcosto').val()));
-    if (diferencial < 0) {
-        alert('El costo de la Acción sobrepasa un ' + (diferencial * -1) + ' al presupuestado del Plan de Marketing');
-        return;
-    }
+    
 
     var idAccion = $('#hdIDAccion').val();
 
@@ -302,6 +298,55 @@ $('#btnNuevo').on('click', function (e) {
     ListarRubroAccion();
 
 });
+
+//new Vue({
+//    el: "#app",
+//    data: {
+//        ListaPlanMKT:null,
+//        listaPersonas: null,
+//        misDatos: null
+//    },
+//    methods: {
+//        traerAxios: function () {
+//            axios.post('/sugerirEstrategiaValida/ListarPlanMKT/').then(function (response) {
+//                if (response.data.Error == false) {
+//                    this.ListaPlanMKT = response.data.ListaPlanMKT
+//                } else {
+//                    alert("Ocurrió un error, revisar el console log para mas detalles...");
+//                    console.error(data.Mensaje);
+//                }
+//            }.bind(this)).catch(function (error) {
+//                console.log(error);
+//            });
+//        },
+//        traerJquery: function () {
+//            $.get('/Home/GetPersonas/', function (data) {
+//                if (data.Error == false) {
+//                    this.listaPersonas = data.personaLista
+//                } else {
+//                    alert("Ocurrió un error, revisar el console log para mas detalles...");
+//                    console.error(data.Mensaje);
+//                }
+//            }.bind(this));
+//        },
+//        limpiarLista: function () {
+//            this.listaPersonas = null;
+//        }
+//    },
+//    computed: {
+//    },
+//    created: function () {
+//        this.traerAxios();
+//        //this.traerAxios();
+//        //this.traerJquery();
+//    },
+//    mounted: function () {
+
+//    }
+//});
+
+
+
 
 $('#btnSugerir').on('click', function (e) {
     e.preventDefault();
@@ -595,6 +640,12 @@ function CalcularPresupuesto() {
         $('#hdCostosAccion').val(costoAccionGeneral);
         var mensaje = '';
         mensaje = 'El Plan de Marketing cuenta con un presupuesto de ' + presupuesto + ', hasta el momento se tiene acumulado en todas las acciones un total de ' + costoAccionGeneral;
+        var diferencial = parseFloat(presupuesto) - parseFloat(costoAccionGeneral);
+        if (diferencial < 0) {
+            mensaje += 'El costo de las Acciones sobrepasa un ' + (diferencial * -1) + ' al presupuestado del Plan de Marketing';
+            return;
+        }
+
         $('#lblMensaje').html(mensaje);
 
 
