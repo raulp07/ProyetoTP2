@@ -1249,13 +1249,13 @@ END
 
 
 
+select * from PlanMarketing
 
-
-insert into PlanMarketing (nombrePanMarketing,descrípcion) values ('Plan Marketing 1','Plan Marketing 1')
-insert into PlanMarketing (nombrePanMarketing,descrípcion) values ('Plan Marketing 2','Plan Marketing 2')
-insert into PlanMarketing (nombrePanMarketing,descrípcion) values ('Plan Marketing 3','Plan Marketing 3')
-insert into PlanMarketing (nombrePanMarketing,descrípcion) values ('Plan Marketing 4','Plan Marketing 4')
-insert into PlanMarketing (nombrePanMarketing,descrípcion) values ('Plan Marketing 5','Plan Marketing 5')
+insert into PlanMarketing (nombrePanMarketing,descrípcion,presupuesto) values ('Plan Marketing 1','Plan Marketing 1',100)
+insert into PlanMarketing (nombrePanMarketing,descrípcion,presupuesto) values ('Plan Marketing 2','Plan Marketing 2',200)
+insert into PlanMarketing (nombrePanMarketing,descrípcion,presupuesto) values ('Plan Marketing 3','Plan Marketing 3',150)
+insert into PlanMarketing (nombrePanMarketing,descrípcion,presupuesto) values ('Plan Marketing 4','Plan Marketing 4',160)
+insert into PlanMarketing (nombrePanMarketing,descrípcion,presupuesto) values ('Plan Marketing 5','Plan Marketing 5',130)
 
 
 insert into Objetivos (Id_PlanMarketing,NombreObjetivo,DescripcionObjetivo) values (1,'Objetivo 1 Planmkt 1','Objetivo 1')
